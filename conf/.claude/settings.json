@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__slack__conversations_history",
+      "mcp__slack__channels_list",
+      "mcp__slack__conversations_search_messages",
+      "mcp__slack__conversations_add_message"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

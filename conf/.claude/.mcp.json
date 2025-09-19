@@ -1,0 +1,29 @@
+{
+  "mcpServers": {
+    "slack": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "slack-mcp-server@${SLACK_MCP_V}",
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "SLACK_MCP_XOXC_TOKEN": "${SLACK_MCP_XOXC_TOKEN}",
+        "SLACK_MCP_XOXD_TOKEN": "${SLACK_MCP_XOXD_TOKEN}",
+        "SLACK_MCP_USER_AGENT": "${SLACK_MCP_USER_AGENT}",
+        "SLACK_MCP_CUSTOM_TLS": "1",
+        "SLACK_MCP_USERS_CACHE": "${SLACK_MCP_USERS_CACHE}",
+        "SLACK_MCP_CHANNELS_CACHE": "${SLACK_MCP_CHANNELS_CACHE}",
+        "SLACK_MCP_ADD_MESSAGE_TOOL":"true"
+      }
+    },
+    "gitlab": {
+      "command": "gitlab-mcp",
+      "env": {
+        "GITLAB_TOKEN": "${GITLAB_TOKEN}",
+        "GITLAB_URL": "${GITLAB_URL}"
+      }
+    }
+  }
+}
