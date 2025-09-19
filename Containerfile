@@ -15,12 +15,12 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# 24-bookworm-slim
-FROM node@sha256:cadbfafeb6baf87eaaffa40b3640209c4b7fd38cebde65059d15bc39cd636b85
+FROM registry.access.redhat.com/ubi10/nodejs-22@sha256:2750825723b0c9bd93f558e5cccdf4bb97bd5341cedea451ddf9032219fc1bfc
 
-RUN apt-get update && \
-    apt-get install -y curl ca-certificates uuid-runtime && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+ARG TARGETARCH
+
+USER root
+ENV HOME /root
 
 # Claude
 # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
@@ -32,32 +32,37 @@ RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_V}
 
 # GCloud
 ENV GCLOUD_V 538.0.0
-RUN curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_V}-linux-x86_64.tar.gz && \
-    tar -xzf google-cloud-cli-${GCLOUD_V}-linux-x86_64.tar.gz -C /opt && \
+ENV GCLOUD_BASE_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_V}"
+ENV GCLOUD_URL="${GCLOUD_BASE_URL}-linux-x86_64.tar.gz"
+RUN if [ "$TARGETARCH" = "arm64" ]; then export GCLOUD_URL="${GCLOUD_BASE_URL}-linux-arm.tar.gz"; fi && \
+    curl -L ${GCLOUD_URL} -o gcloud.tar.gz && \
+    tar -xzf gcloud.tar.gz -C /opt && \
     /opt/google-cloud-sdk/install.sh -q && \
     ln -s /opt/google-cloud-sdk/bin/gcloud /usr/local/bin/gcloud && \
-    rm google-cloud-cli-${GCLOUD_V}-linux-x86_64.tar.gz 
+    rm gcloud.tar.gz 
 
 # Slack
 # https://github.com/korotovsky/slack-mcp-server/releases
 ENV SLACK_MCP_V v1.1.24
 ENV SLACK_MCP_CUSTOM_TLS=1 \
     SLACK_MCP_USER_AGENT='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36' \
-    SLACK_MCP_USERS_CACHE=/root/claude/mcp/slack/.users_cache.json \
-    SLACK_MCP_CHANNELS_CACHE=/root/claude/mcp/slack/.channels_cache_v2.json
+    SLACK_MCP_USERS_CACHE=${HOME}/claude/mcp/slack/.users_cache.json \
+    SLACK_MCP_CHANNELS_CACHE=${HOME}/claude/mcp/slack/.channels_cache_v2.json
 
 # Gitlab
 # https://gitlab.com/fforster/gitlab-mcp/-/releases 
 ENV GITLAB_MCP_V 1.31.0
-ENV GITLAB_MCP_URL https://gitlab.com/fforster/gitlab-mcp/-/releases/v${GITLAB_MCP_V}/downloads/gitlab-mcp_${GITLAB_MCP_V}_Linux_x86_64.tar.gz
-RUN mkdir -p /root/claude/mcp/slack && \
-    curl -LO ${GITLAB_MCP_URL} && \
-    tar -xzvf gitlab-mcp_1.31.0_Linux_x86_64.tar.gz && \
+ENV GITLAB_MCP_BASE_URL https://gitlab.com/fforster/gitlab-mcp/-/releases/v${GITLAB_MCP_V}/downloads/gitlab-mcp_${GITLAB_MCP_V}
+ENV GITLAB_MCP_URL ${GITLAB_MCP_BASE_URL}_Linux_x86_64.tar.gz
+RUN mkdir -p ${HOME}/claude/mcp/slack && \
+    if [ "$TARGETARCH" = "arm64" ]; then export GITLAB_MCP_URL="${GITLAB_MCP_BASE_URL}_Linux_arm64.tar.gz"; fi && \
+    curl -L ${GITLAB_MCP_URL} -o gitlab-mcp.tar.gz && \
+    tar -xzvf gitlab-mcp.tar.gz && \
     mv gitlab-mcp /usr/local/bin/ && \
-    rm gitlab-mcp_1.31.0_Linux_x86_64.tar.gz
+    rm gitlab-mcp.tar.gz
 
 # Conf
-COPY conf/ /root/
+COPY conf/ ${HOME}/
 
 # Entrypoint
 COPY entrypoint.sh /entrypoint.sh

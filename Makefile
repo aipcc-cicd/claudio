@@ -21,8 +21,18 @@ CONTAINER_MANAGER ?= podman
 # Image URL to use all building/pushing image targets
 IMG ?= quay.io/redhat-aipcc/claudio:v${VERSION}
 
-# Build for amd64 architecture only
-.PHONY: oci-build
-oci-build: 
-	${CONTAINER_MANAGER} build -t $(IMG) -f Containerfile .
+# Build actions
+.PHONY: oci-build oci-build-amd64 oci-build-arm64 oci-manifest
 
+oci-build: oci-build-amd64 oci-build-arm64 oci-manifest
+ 
+oci-build-amd64: 
+	${CONTAINER_MANAGER} build --platform linux/amd64 -t $(IMG)-amd64 -f Containerfile .
+
+oci-build-arm64: 
+	${CONTAINER_MANAGER} build --platform linux/arm64 -t $(IMG)-arm64 -f Containerfile .
+
+oci-manifest:
+	${CONTAINER_MANAGER} manifest create --amend $(IMG)
+	${CONTAINER_MANAGER} manifest add --all $(IMG) containers-storage:$(IMG)-amd64
+	${CONTAINER_MANAGER} manifest add --all $(IMG) containers-storage:$(IMG)-arm64
