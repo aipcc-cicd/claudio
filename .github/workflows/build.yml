@@ -1,0 +1,70 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_REPO: ${{ format('{0}/{1}', 'ghcr.io', github.repository) }}
+  IMAGE_TAG: ${{ github.event_name == 'pull_request' && format('pr-{0}-{1}', github.event.number, github.sha) || github.sha }}
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build and push image (${{ matrix.arch }})
+      env:
+        IMAGE_TAG: ${{ env.IMAGE_TAG }}-${{ matrix.arch }}
+      run: |
+        make oci-build
+        make oci-push
+
+  manifest:
+    needs: build
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create and push manifest
+      run: |
+        make oci-manifest-build
+        make oci-manifest-push
+
+    - name: Tag as latest (main branch only)
+      if: github.ref == 'refs/heads/main'
+      run: |
+        make oci-tag
+        make oci-push
+      env:
+        IMAGE_TAG: latest

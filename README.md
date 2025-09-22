@@ -36,11 +36,32 @@ To manage Openshift / K8s integration claudio will use https://github.com/contai
 
 # Build
 
-To build the container with latest dbs run the command:
+To build the container run the command:
 
 ```bash
 make oci-build
 ```
+
+This builds for the native architecture of the current platform.
+
+You can customize the image name and tag:
+
+```bash
+IMAGE_REPO=ghcr.io/myorg/claudio IMAGE_TAG=latest make oci-build
+```
+
+By default, the Makefile uses Podman. To use Docker instead:
+
+```bash
+CONTAINER_MANAGER=docker make oci-build
+```
+
+Available targets:
+- `oci-build` - Build container image for native architecture
+- `oci-push` - Push container image
+- `oci-tag` - Tag existing image with new tag
+- `oci-manifest-build` - Create multi-arch manifest from arch-tagged images
+- `oci-manifest-push` - Push manifest to registry
 
 # Usage
 
@@ -49,14 +70,14 @@ Claudio sample usage:
 ```bash
 # Create a volume to hold the auth for gcloud
 podman volume create claudio-gcp
-        
+
 # Create a volume to hold cache for mcp slack
 podman volume create claudio-mcp-slack
 
 # Run claudio
 podman run -it --rm \
         # Optional
-        -v claudio-gcp:/root/.config/gcloud:Z \ 
+        -v claudio-gcp:/root/.config/gcloud:Z \
         # Optional
         -v claudio-mcp-slack:/root/claude/mcp/slack:Z \
         -e GITLAB_URL='https://gitlab.com' \

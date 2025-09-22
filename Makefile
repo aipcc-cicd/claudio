@@ -18,21 +18,28 @@
 VERSION ?= 1.0.0-dev
 CONTAINER_MANAGER ?= podman
 
-# Image URL to use all building/pushing image targets
-IMG ?= quay.io/redhat-aipcc/claudio:v${VERSION}
+# Image configuration
+IMAGE_REPO ?= quay.io/redhat-aipcc/claudio
+IMAGE_TAG ?= v${VERSION}
+IMAGE_NAME ?= $(IMAGE_REPO):$(IMAGE_TAG)
 
 # Build actions
-.PHONY: oci-build oci-build-amd64 oci-build-arm64 oci-manifest
+.PHONY: oci-build oci-manifest-build oci-manifest-push oci-tag oci-push
 
-oci-build: oci-build-amd64 oci-build-arm64 oci-manifest
- 
-oci-build-amd64: 
-	${CONTAINER_MANAGER} build --platform linux/amd64 -t $(IMG)-amd64 -f Containerfile .
+oci-build:
+	${CONTAINER_MANAGER} build -t $(IMAGE_NAME) .
 
-oci-build-arm64: 
-	${CONTAINER_MANAGER} build --platform linux/arm64 -t $(IMG)-arm64 -f Containerfile .
+oci-manifest-build:
+	${CONTAINER_MANAGER} manifest rm $(IMAGE_NAME) || true
+	${CONTAINER_MANAGER} manifest create --amend $(IMAGE_NAME)
+	${CONTAINER_MANAGER} manifest add --all $(IMAGE_NAME) $(IMAGE_NAME)-amd64
+	${CONTAINER_MANAGER} manifest add --all $(IMAGE_NAME) $(IMAGE_NAME)-arm64
 
-oci-manifest:
-	${CONTAINER_MANAGER} manifest create --amend $(IMG)
-	${CONTAINER_MANAGER} manifest add --all $(IMG) containers-storage:$(IMG)-amd64
-	${CONTAINER_MANAGER} manifest add --all $(IMG) containers-storage:$(IMG)-arm64
+oci-manifest-push:
+	${CONTAINER_MANAGER} manifest push $(IMAGE_NAME)
+
+oci-tag:
+	${CONTAINER_MANAGER} tag $(IMAGE_NAME) $(IMAGE_REPO):$(IMAGE_TAG)
+
+oci-push:
+	${CONTAINER_MANAGER} push $(IMAGE_NAME)
