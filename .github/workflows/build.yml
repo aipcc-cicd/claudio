@@ -62,9 +62,9 @@ jobs:
         make oci-manifest-push
 
     - name: Tag as latest (main branch only)
-      if: github.ref == 'refs/heads/main'
+      if: github.event_name == 'push'
       run: |
         make oci-tag
         make oci-push
       env:
-        IMAGE_TAG: latest
+        IMAGE_TARGET_TAG: latest
