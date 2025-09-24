@@ -34,14 +34,21 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Build and push image (${{ matrix.arch }})
+    - name: Build image (${{ matrix.arch }})
       env:
         IMAGE_TAG: ${{ env.IMAGE_TAG }}-${{ matrix.arch }}
       run: |
         make oci-build
+
+    - name: Push image (${{ matrix.arch }})
+      if: github.event_name == 'push'
+      env:
+        IMAGE_TAG: ${{ env.IMAGE_TAG }}-${{ matrix.arch }}
+      run: |
         make oci-push
 
   manifest:
+    if: github.event_name == 'push'
     needs: build
     runs-on: ubuntu-24.04
 
@@ -62,7 +69,6 @@ jobs:
         make oci-manifest-push
 
     - name: Tag as latest (main branch only)
-      if: github.event_name == 'push'
       run: |
         make oci-tag
         make oci-push
