@@ -39,7 +39,7 @@ oci-manifest-push:
 	${CONTAINER_MANAGER} manifest push $(IMAGE_NAME)
 
 oci-tag:
-	${CONTAINER_MANAGER} tag $(IMAGE_NAME) $(IMAGE_REPO):$(IMAGE_TARGET_TAG)
+	${CONTAINER_MANAGER} tag $(IMAGE_REPO):$(IMAGE_SOURCE_TAG) $(IMAGE_NAME) 
 
 oci-push:
 	${CONTAINER_MANAGER} push $(IMAGE_NAME)

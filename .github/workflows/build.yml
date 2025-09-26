@@ -73,4 +73,5 @@ jobs:
         make oci-tag
         make oci-push
       env:
-        IMAGE_TARGET_TAG: latest
+        IMAGE_SOURCE_TAG: ${{ env.IMAGE_TAG }}
+        IMAGE_TAG: latest
