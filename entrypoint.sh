@@ -37,7 +37,9 @@ fi
 # When this is fixed just use
 # exec claude "$@"
 SESSIONID=$(uuidgen)
-claude -p "$(cat ~/CLAUDE.md)" --session-id ${SESSIONID} > /dev/null
-exec claude -r ${SESSIONID} --mcp-config ~/.claude/.mcp.json "$@"
+for c in ~/.claude/context.d/*.md; do
+  claude -p "$(cat $c)" --session-id ${SESSIONID} > /dev/null  
+done
+exec claude -r ${SESSIONID} --mcp-config ~/.claude/mcp.d/*.json "$@"
 
 

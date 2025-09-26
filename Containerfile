@@ -22,6 +22,8 @@ ARG TARGETARCH
 USER root
 ENV HOME /root
 
+RUN dnf install -y skopeo
+
 # Claude
 # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
 ENV CLAUDE_V 1.0.113
@@ -60,6 +62,10 @@ RUN mkdir -p ${HOME}/claude/mcp/slack && \
     tar -xzvf gitlab-mcp.tar.gz && \
     mv gitlab-mcp /usr/local/bin/ && \
     rm gitlab-mcp.tar.gz
+
+# K8s
+# https://github.com/containers/kubernetes-mcp-server/releases
+ENV K8S_MCP_V v0.0.52
 
 # Conf
 COPY conf/ ${HOME}/
