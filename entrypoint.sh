@@ -1,6 +1,12 @@
 #!/bin/bash
 
-set -ex
+# Default DEBUG to false if not set
+DEBUG="${DEBUG:-false}"
+
+# Enable debug if DEBUG is true
+if [ "$DEBUG" = "true" ]; then
+  set -x
+fi
 
 ADC_PATH="${HOME}/.config/gcloud/application_default_credentials.json"
 
@@ -37,7 +43,10 @@ fi
 # When this is fixed just use
 # exec claude "$@"
 SESSIONID=$(uuidgen)
-claude -p "$(cat ~/CLAUDE.md)" --session-id ${SESSIONID} > /dev/null
-exec claude -r ${SESSIONID} --mcp-config ~/.claude/.mcp.json "$@"
-
-
+CONTEXT_FILE=~/context.md
+: > "$CONTEXT_FILE" 
+for c in ~/.claude/context.d/*.md; do
+  tee -a "$CONTEXT_FILE" < "$c"
+done
+claude -p "$(cat "$CONTEXT_FILE")" --session-id "$SESSIONID" > /dev/null
+exec claude -r ${SESSIONID} --mcp-config ~/.claude/mcp.d/*.json "$@"

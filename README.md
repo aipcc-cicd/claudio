@@ -34,6 +34,8 @@ For Auth check https://gitlab.com/fforster/gitlab-mcp#authentication
 
 To manage Openshift / K8s integration claudio will use https://github.com/containers/kubernetes-mcp-server
 
+We will need to add the kubeconfig as part of the execution and set its path with `K8S_MCP_KUBECONFIG_PATH`
+
 # Build
 
 To build the container run the command:
@@ -76,6 +78,7 @@ podman volume create claudio-mcp-slack
 
 # Run claudio
 podman run -it --rm \
+        -v ${PWD}/kubecofing:/opt/k8s/kubeconfig:z \
         # Optional
         -v claudio-gcp:/root/.config/gcloud:Z \
         # Optional
@@ -86,6 +89,7 @@ podman run -it --rm \
         -e ANTHROPIC_VERTEX_PROJECT_QUOTA=... \
         -e SLACK_MCP_XOXC_TOKEN='xoxc-...' \
         -e SLACK_MCP_XOXD_TOKEN='xoxd-...' \
+        -e K8S_MCP_KUBECONFIG_PATH=/opt/k8s/kubeconfig \
         quay.io/redhat-aipcc/claudio:v1.0.0-dev
 ```
 
@@ -94,6 +98,7 @@ Claudio on a host where user is already logged in on gcloud:
 ```bash
 # Run claudio
 podman run -it --rm \
+        -v ${PWD}/kubecofing:/opt/k8s/kubeconfig:z \
         -v /home/$USER/.conf/gcloud:/root/.config/gcloud:z \
         -e GITLAB_URL='https://gitlab.com' \
         -e GITLAB_TOKEN='...' \
@@ -101,6 +106,7 @@ podman run -it --rm \
         -e ANTHROPIC_VERTEX_PROJECT_QUOTA=... \
         -e SLACK_MCP_XOXC_TOKEN='xoxc-...' \
         -e SLACK_MCP_XOXD_TOKEN='xoxd-...' \
+        -e K8S_MCP_KUBECONFIG_PATH=/opt/k8s/kubeconfig \
         quay.io/redhat-aipcc/claudio:v1.0.0-dev
 ```
 
@@ -109,6 +115,7 @@ Claudio one-time prompt
 ```bash
 # Run claudio
 podman run -it --rm \
+        -v ${PWD}/kubecofing:/opt/k8s/kubeconfig:z \
         -v /home/$USER/.conf/gcloud:/root/.config/gcloud:z \
         -e GITLAB_URL='https://gitlab.com' \
         -e GITLAB_TOKEN='...' \
@@ -116,6 +123,7 @@ podman run -it --rm \
         -e ANTHROPIC_VERTEX_PROJECT_QUOTA=... \
         -e SLACK_MCP_XOXC_TOKEN='xoxc-...' \
         -e SLACK_MCP_XOXD_TOKEN='xoxd-...' \
+        -e K8S_MCP_KUBECONFIG_PATH=/opt/k8s/kubeconfig \
         quay.io/redhat-aipcc/claudio:v1.0.0-dev \
                 -p "do something for me Claudio"
 ```

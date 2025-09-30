@@ -24,6 +24,18 @@
         "GITLAB_TOKEN": "${GITLAB_TOKEN}",
         "GITLAB_URL": "${GITLAB_URL}"
       }
+    },
+    "k8s": {
+      "command": "npx",
+      "args": [
+        "-y", 
+        "kubernetes-mcp-server@${K8S_MCP_V}",
+        "--kubeconfig",
+        "${K8S_MCP_KUBECONFIG_PATH}",
+        "--disable-destructive",
+        "--toolsets",
+        "core"
+      ]
     }
   }
 }
