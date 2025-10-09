@@ -15,7 +15,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-FROM registry.access.redhat.com/ubi10/nodejs-22@sha256:f79613e29c1cc7ca8b5e98804f17088608a55ebc464fe5008eb923e5f64421a6
+FROM registry.access.redhat.com/ubi10/nodejs-22@sha256:046420a0f946ccada9f13a0c3a476687ae8ff7c1a7b698e65b0209014a720efd
 
 ARG TARGETARCH
 
