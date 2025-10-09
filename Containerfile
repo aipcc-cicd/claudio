@@ -22,7 +22,7 @@ ARG TARGETARCH
 USER root
 ENV HOME /root
 
-RUN dnf install -y skopeo
+RUN dnf install -y skopeo podman jq
 
 # Claude
 # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
