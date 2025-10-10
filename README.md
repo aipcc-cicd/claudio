@@ -67,7 +67,7 @@ Available targets:
 
 # Usage
 
-Claudio sample usage:
+In order to make claudio OpenShift compliant the default user for the container is default, it is also part of the root group, under some circumstances when mapping host volumes podman is not able to access the volume (even with the right permissions), to avoid that siatuion we suggest when running locally to use `--user 0` to enforce default behavior by podman.
 
 ```bash
 # Create a volume to hold the auth for gcloud
@@ -77,7 +77,7 @@ podman volume create claudio-gcp
 podman volume create claudio-mcp-slack
 
 # Run claudio
-podman run -it --rm \
+podman run -it --rm --user 0 \
         -v ${PWD}/kubecofing:/opt/k8s/kubeconfig:z \
         # Optional
         -v claudio-gcp:/root/.config/gcloud:Z \
@@ -97,7 +97,7 @@ Claudio on a host where user is already logged in on gcloud:
 
 ```bash
 # Run claudio
-podman run -it --rm \
+podman run -it --rm -user 0 \
         -v ${PWD}/kubecofing:/opt/k8s/kubeconfig:z \
         -v /home/$USER/.conf/gcloud:/root/.config/gcloud:z \
         -e GITLAB_URL='https://gitlab.com' \
@@ -114,7 +114,7 @@ Claudio one-time prompt
 
 ```bash
 # Run claudio
-podman run -it --rm \
+podman run -it --rm -user 0 \
         -v ${PWD}/kubecofing:/opt/k8s/kubeconfig:z \
         -v /home/$USER/.conf/gcloud:/root/.config/gcloud:z \
         -e GITLAB_URL='https://gitlab.com' \
