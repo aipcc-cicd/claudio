@@ -8,7 +8,9 @@
       "mcp__gitlab__list_project_merge_requests",
       "mcp__gitlab__get_merge_request",
       "mcp__gitlab__get_job",
-      "mcp__gitlab__list_group_merge_requests"
+      "mcp__gitlab__list_group_merge_requests",
+      "mcp__k8s__resources_list",
+      "mcp__k8s__resources_get"
     ],
     "deny": [],
     "ask": []
