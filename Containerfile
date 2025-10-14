@@ -15,7 +15,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-FROM registry.access.redhat.com/ubi10/nodejs-22@sha256:046420a0f946ccada9f13a0c3a476687ae8ff7c1a7b698e65b0209014a720efd
+FROM registry.access.redhat.com/ubi10/nodejs-22@sha256:9e150b1673bb80019a32fa18c122caf1bab94ddd872e672dcdf06114935e1371
 
 ARG TARGETARCH
 USER root
@@ -26,14 +26,14 @@ RUN dnf install -y skopeo podman jq
 
 # Claude
 # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
-ENV CLAUDE_V 1.0.113
+ENV CLAUDE_V 2.0.14
 ENV CLAUDE_CODE_USE_VERTEX=1 \
     CLOUD_ML_REGION=us-east5 \
     DISABLE_AUTOUPDATER=1
 RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_V} 
 
 # GCloud
-ENV GCLOUD_V 538.0.0
+ENV GCLOUD_V 542.0.0
 ENV GCLOUD_BASE_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_V}"
 ENV GCLOUD_URL="${GCLOUD_BASE_URL}-linux-x86_64.tar.gz"
 RUN if [ "$TARGETARCH" = "arm64" ]; then export GCLOUD_URL="${GCLOUD_BASE_URL}-linux-arm.tar.gz"; fi && \
@@ -45,7 +45,7 @@ RUN if [ "$TARGETARCH" = "arm64" ]; then export GCLOUD_URL="${GCLOUD_BASE_URL}-l
 
 # Slack
 # https://github.com/korotovsky/slack-mcp-server/releases
-ENV SLACK_MCP_V v1.1.24
+ENV SLACK_MCP_V v1.1.26
 ENV SLACK_MCP_CUSTOM_TLS=1 \
     SLACK_MCP_USER_AGENT='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36' \
     SLACK_MCP_USERS_CACHE=${HOME}/claude/mcp/slack/.users_cache.json \
@@ -53,7 +53,7 @@ ENV SLACK_MCP_CUSTOM_TLS=1 \
 
 # Gitlab
 # https://gitlab.com/fforster/gitlab-mcp/-/releases 
-ENV GITLAB_MCP_V 1.31.0
+ENV GITLAB_MCP_V 1.31.1
 ENV GITLAB_MCP_BASE_URL https://gitlab.com/fforster/gitlab-mcp/-/releases/v${GITLAB_MCP_V}/downloads/gitlab-mcp_${GITLAB_MCP_V}
 ENV GITLAB_MCP_URL ${GITLAB_MCP_BASE_URL}_Linux_x86_64.tar.gz
 RUN mkdir -p ${HOME}/claude/mcp/slack && \
@@ -65,7 +65,7 @@ RUN mkdir -p ${HOME}/claude/mcp/slack && \
 
 # K8s
 # https://github.com/containers/kubernetes-mcp-server/releases
-ENV K8S_MCP_V v0.0.52
+ENV K8S_MCP_V v0.0.53
 
 # Conf
 COPY conf/ ${HOME}/
