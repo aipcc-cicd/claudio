@@ -113,8 +113,8 @@ podman run -it --rm -user 0 \
 Claudio one-time prompt
 
 ```bash
-# Run claudio
-podman run -it --rm -user 0 \
+# Run claudio with a prompt
+podman run -it --rm --user 0 \
         -v ${PWD}/kubecofing:/opt/k8s/kubeconfig:z \
         -v /home/$USER/.conf/gcloud:/root/.config/gcloud:z \
         -e GITLAB_URL='https://gitlab.com' \
@@ -127,3 +127,83 @@ podman run -it --rm -user 0 \
         quay.io/redhat-aipcc/claudio:v1.0.0-dev \
                 -p "do something for me Claudio"
 ```
+
+# Custom Commands
+
+Claudio supports loading project-specific slash commands from your workspace. This enables reusable command templates for common workflows.
+
+## Creating Custom Commands
+
+1. Create a `.claude/commands` directory in your workspace:
+```bash
+mkdir -p .claude/commands
+```
+
+2. Add command files in Markdown format (`.md` extension):
+```bash
+cat > .claude/commands/create-release.md << 'EOF'
+# Create RHAIIS Release
+
+Create production Release YAMLs for RHAIIS version $1.
+
+Steps:
+1. Find Git SHA for tag v$1
+2. List all stage releases for that SHA
+3. Extract snapshot IDs from each component
+4. Generate 5 production Release YAML files
+EOF
+```
+
+3. Mount your workspace when running Claudio:
+```bash
+podman run -it --rm --user 0 \
+        -v ${PWD}:/workspace:z \
+        -v ${PWD}/kubeconfig:/opt/k8s/kubeconfig:z \
+        -e ANTHROPIC_VERTEX_PROJECT_ID=... \
+        -e ANTHROPIC_VERTEX_PROJECT_QUOTA=... \
+        -e K8S_MCP_KUBECONFIG_PATH=/opt/k8s/kubeconfig \
+        quay.io/redhat-aipcc/claudio:v1.0.0-dev
+```
+
+## Using Custom Commands
+
+### Interactive Mode
+In the Claude Code session, use your slash command:
+```
+/create-release 3.2.3
+```
+
+### Non-Interactive Mode
+Execute slash commands directly when starting the container:
+```bash
+# Run a custom command with arguments
+podman run -it --rm --user 0 \
+        -v ${PWD}:/workspace:z \
+        -v ${PWD}/kubeconfig:/opt/k8s/kubeconfig:z \
+        -e ANTHROPIC_VERTEX_PROJECT_ID=... \
+        -e ANTHROPIC_VERTEX_PROJECT_QUOTA=... \
+        -e K8S_MCP_KUBECONFIG_PATH=/opt/k8s/kubeconfig \
+        quay.io/redhat-aipcc/claudio:v1.0.0-dev \
+        /create-release 3.2.3
+```
+
+## Command Arguments
+
+Commands support argument substitution:
+- `$ARGUMENTS` - All arguments as a single string
+- `$1`, `$2`, `$3`, etc. - Individual positional arguments
+
+Example command with multiple arguments:
+```markdown
+# Deploy to Environment
+
+Deploy RHAIIS version $1 to environment $2.
+
+Steps:
+1. Verify version $1 exists in registry
+2. Update deployment manifests for $2 environment
+3. Apply changes to cluster
+4. Monitor rollout status
+```
+
+Usage: `/deploy-to-env 3.2.3 staging`
