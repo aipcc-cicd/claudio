@@ -57,7 +57,7 @@ jobs:
         make oci-save
 
     - name: Upload image artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: claudio-${{ matrix.arch }}
         path: claudio-${{ matrix.arch }}.tar
@@ -70,7 +70,7 @@ jobs:
 
     steps:
     - name: Download claudio images
-      uses: actions/download-artifact@v5
+      uses: actions/download-artifact@v6
       with:
         pattern: claudio-*
 
@@ -79,7 +79,7 @@ jobs:
         echo "${{ env.GHCR_IMAGE_REPO }}:pr-${{ github.event.number }}" > claudio-image
 
     - name: Upload combined artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: claudio-arm64-and-amd64
         path: claudio-*
@@ -98,7 +98,7 @@ jobs:
       uses: actions/checkout@v5
 
     - name: Download claudio images
-      uses: actions/download-artifact@v5
+      uses: actions/download-artifact@v6
       with:
         pattern: claudio-*
 
@@ -139,7 +139,7 @@ jobs:
       uses: actions/checkout@v5
 
     - name: Download claudio images
-      uses: actions/download-artifact@v5
+      uses: actions/download-artifact@v6
       with:
         pattern: claudio-*
 
