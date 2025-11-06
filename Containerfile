@@ -52,16 +52,8 @@ ENV SLACK_MCP_CUSTOM_TLS=1 \
     SLACK_MCP_CHANNELS_CACHE=${HOME}/claude/mcp/slack/.channels_cache_v2.json
 
 # Gitlab
-# https://gitlab.com/fforster/gitlab-mcp/-/releases 
-ENV GITLAB_MCP_V 1.31.1
-ENV GITLAB_MCP_BASE_URL https://gitlab.com/fforster/gitlab-mcp/-/releases/v${GITLAB_MCP_V}/downloads/gitlab-mcp_${GITLAB_MCP_V}
-ENV GITLAB_MCP_URL ${GITLAB_MCP_BASE_URL}_Linux_x86_64.tar.gz
-RUN mkdir -p ${HOME}/claude/mcp/slack && \
-    if [ "$TARGETARCH" = "arm64" ]; then export GITLAB_MCP_URL="${GITLAB_MCP_BASE_URL}_Linux_arm64.tar.gz"; fi && \
-    curl -L ${GITLAB_MCP_URL} -o gitlab-mcp.tar.gz && \
-    tar -xzvf gitlab-mcp.tar.gz && \
-    mv gitlab-mcp /usr/local/bin/ && \
-    rm gitlab-mcp.tar.gz
+# https://github.com/zereight/gitlab-mcp/releases
+ENV GITLAB_MCP_V 2.0.9
 
 # K8s
 # https://github.com/containers/kubernetes-mcp-server/releases

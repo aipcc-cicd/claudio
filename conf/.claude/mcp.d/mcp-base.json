@@ -19,10 +19,15 @@
       }
     },
     "gitlab": {
-      "command": "gitlab-mcp",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@zereight/mcp-gitlab@${GITLAB_MCP_V}"
+      ],
       "env": {
-        "GITLAB_TOKEN": "${GITLAB_TOKEN}",
-        "GITLAB_URL": "${GITLAB_URL}"
+        "GITLAB_PERSONAL_ACCESS_TOKEN": "${GITLAB_TOKEN}",
+        "GITLAB_API_URL": "${GITLAB_URL}",
+        "USE_PIPELINE": "true"
       }
     },
     "k8s": {

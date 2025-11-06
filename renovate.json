@@ -48,19 +48,16 @@
     },
     {
       "customType": "regex",
-      "description": "Update GitLab MCP binary version",
+      "description": "Update GitLab MCP npm package version",
       "managerFilePatterns": [
         "Containerfile"
       ],
       "matchStrings": [
         "ENV\\s+GITLAB_MCP_V\\s+(?<currentValue>\\d+\\.\\d+\\.\\d+)"
       ],
-      "datasourceTemplate": "gitlab-releases",
-      "registryUrlTemplate": "https://gitlab.com",
-      "depNameTemplate": "fforster/gitlab-mcp",
-      "extractVersionTemplate": "^v?(?<version>\\d+\\.\\d+\\.\\d+)$",
-      "versioningTemplate": "regex:^v?(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$",
-      "autoReplaceStringTemplate": "ENV GITLAB_MCP_V {{newVersion}}"
+      "datasourceTemplate": "npm",
+      "depNameTemplate": "@zereight/mcp-gitlab",
+      "autoReplaceStringTemplate": "ENV GITLAB_MCP_V {{newValue}}"
     },
     {
       "customType": "regex",
