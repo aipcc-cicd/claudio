@@ -38,13 +38,18 @@ if ! check_adc; then
   gcloud auth application-default set-quota-project ${ANTHROPIC_VERTEX_PROJECT_QUOTA}
 fi
 
+# Change to workdir if it exists (for mounted volumes)
+if [ -d "$HOME/workdir" ]; then
+  cd "$HOME/workdir"
+fi
+
 # Run claude
 # https://github.com/anthropics/claude-code/issues/2425
 # When this is fixed just use
 # exec claude "$@"
 SESSIONID=$(uuidgen)
 CONTEXT_FILE=~/context.md
-: > "$CONTEXT_FILE" 
+: > "$CONTEXT_FILE"
 for c in ~/.claude/context.d/*.md; do
   tee -a "$CONTEXT_FILE" < "$c"
 done
