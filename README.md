@@ -69,6 +69,31 @@ Available targets:
 
 In order to make claudio OpenShift compliant the default user for the container is default, it is also part of the root group, under some circumstances when mapping host volumes podman is not able to access the volume (even with the right permissions), to avoid that siatuion we suggest when running locally to use `--user 0` to enforce default behavior by podman.
 
+## Working with Local Projects
+
+Claudio supports mounting your local project directory for interactive development. When you mount a directory to `/home/default/workdir`, claudio will automatically change to that directory before starting the Claude session, allowing you to work with your local files.
+
+Example mounting your current directory:
+
+```bash
+podman run -it --rm --user 0 \
+        -v ${PWD}:/home/default/workdir:z \
+        -v claudio-gcp:/root/.config/gcloud:Z \
+        -v claudio-mcp-slack:/root/claude/mcp/slack:Z \
+        -e GITLAB_URL='https://gitlab.com' \
+        -e GITLAB_TOKEN='...' \
+        -e ANTHROPIC_VERTEX_PROJECT_ID=... \
+        -e ANTHROPIC_VERTEX_PROJECT_QUOTA=... \
+        -e SLACK_MCP_XOXC_TOKEN='xoxc-...' \
+        -e SLACK_MCP_XOXD_TOKEN='xoxd-...' \
+        -e K8S_MCP_KUBECONFIG_PATH=/opt/k8s/kubeconfig \
+        quay.io/redhat-aipcc/claudio:v1.0.0-dev
+```
+
+This allows you to use claudio with your local codebase, making file edits, running commands, and interacting with your project files directly.
+
+## Basic Setup
+
 ```bash
 # Create a volume to hold the auth for gcloud
 podman volume create claudio-gcp
