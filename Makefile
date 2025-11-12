@@ -19,7 +19,7 @@ VERSION ?= 1.0.0-dev
 CONTAINER_MANAGER ?= podman
 
 # Image configuration
-IMAGE_REPO ?= quay.io/redhat-aipcc/claudio
+IMAGE_REPO ?= quay.io/aipcc-cicd/claudio
 IMAGE_TAG ?= v${VERSION}
 IMAGE_NAME ?= $(IMAGE_REPO):$(IMAGE_TAG)
 IMAGE_SOURCE_TAG ?= $(IMAGE_TAG)

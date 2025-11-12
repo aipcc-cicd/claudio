@@ -90,7 +90,7 @@ podman run -it --rm --user 0 \
         -e SLACK_MCP_XOXC_TOKEN='xoxc-...' \
         -e SLACK_MCP_XOXD_TOKEN='xoxd-...' \
         -e K8S_MCP_KUBECONFIG_PATH=/opt/k8s/kubeconfig \
-        quay.io/redhat-aipcc/claudio:v1.0.0-dev
+        quay.io/aipcc-cicd/claudio:v1.0.0-dev
 ```
 
 Claudio on a host where user is already logged in on gcloud:
@@ -107,7 +107,7 @@ podman run -it --rm -user 0 \
         -e SLACK_MCP_XOXC_TOKEN='xoxc-...' \
         -e SLACK_MCP_XOXD_TOKEN='xoxd-...' \
         -e K8S_MCP_KUBECONFIG_PATH=/opt/k8s/kubeconfig \
-        quay.io/redhat-aipcc/claudio:v1.0.0-dev
+        quay.io/aipcc-cicd/claudio:v1.0.0-dev
 ```
 
 Claudio one-time prompt
@@ -124,6 +124,6 @@ podman run -it --rm -user 0 \
         -e SLACK_MCP_XOXC_TOKEN='xoxc-...' \
         -e SLACK_MCP_XOXD_TOKEN='xoxd-...' \
         -e K8S_MCP_KUBECONFIG_PATH=/opt/k8s/kubeconfig \
-        quay.io/redhat-aipcc/claudio:v1.0.0-dev \
+        quay.io/aipcc-cicd/claudio:v1.0.0-dev \
                 -p "do something for me Claudio"
 ```
