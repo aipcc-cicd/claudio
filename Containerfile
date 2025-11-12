@@ -53,11 +53,11 @@ ENV SLACK_MCP_CUSTOM_TLS=1 \
 
 # Gitlab
 # https://github.com/zereight/gitlab-mcp/releases
-ENV GITLAB_MCP_V 2.0.9
+ENV GITLAB_MCP_V 2.0.11
 
 # K8s
 # https://github.com/containers/kubernetes-mcp-server/releases
-ENV K8S_MCP_V v0.0.53
+ENV K8S_MCP_V v0.0.54
 
 # Conf
 COPY conf/ ${HOME}/
