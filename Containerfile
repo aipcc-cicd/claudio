@@ -26,7 +26,7 @@ RUN dnf install -y skopeo podman jq
 
 # Claude
 # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
-ENV CLAUDE_V 2.0.37
+ENV CLAUDE_V 2.0.42
 ENV CLAUDE_CODE_USE_VERTEX=1 \
     CLOUD_ML_REGION=us-east5 \
     DISABLE_AUTOUPDATER=1
