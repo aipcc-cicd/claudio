@@ -51,17 +51,31 @@ ENV SLACK_MCP_CUSTOM_TLS=1 \
     SLACK_MCP_USERS_CACHE=${HOME}/claude/mcp/slack/.users_cache.json \
     SLACK_MCP_CHANNELS_CACHE=${HOME}/claude/mcp/slack/.channels_cache_v2.json
 
-# Gitlab
-# https://github.com/zereight/gitlab-mcp/releases
-ENV GITLAB_MCP_V 2.0.11
+# Glab CLI
+# https://gitlab.com/gitlab-org/cli/-/releases
+ENV GLAB_V 1.78.3
+RUN curl -L https://gitlab.com/gitlab-org/cli/-/releases/v${GLAB_V}/downloads/glab_${GLAB_V}_linux_${TARGETARCH}.rpm -o glab.rpm && \
+    dnf install -y ./glab.rpm && \
+    rm glab.rpm
 
-# K8s
-# https://github.com/containers/kubernetes-mcp-server/releases
-ENV K8S_MCP_V v0.0.54
+# Kubectl
+# https://kubernetes.io/releases/
+ENV KUBECTL_V 1.32.0
+RUN curl -L https://dl.k8s.io/release/v${KUBECTL_V}/bin/linux/${TARGETARCH}/kubectl -o /usr/local/bin/kubectl && \
+    chmod +x /usr/local/bin/kubectl
+
+# Claudio Skills
+# https://github.com/aipcc-cicd/claudio-skills/releases
+ENV CLAUDIO_SKILLS_V v0.1.0
 
 # Conf
 COPY conf/ ${HOME}/
+COPY scripts/ /usr/local/bin/
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+
+# Clone the skills marketplace and generate plugin configs (as root)
+RUN git clone --branch ${CLAUDIO_SKILLS_V} --depth 1 https://github.com/aipcc-cicd/claudio-skills.git ${HOME}/claudio-skills && \
+    /usr/local/bin/generate-plugin-configs.sh ${HOME}/claudio-skills ${HOME}/.claude/plugins
 
 # Setup non root user
 WORKDIR /home/default

@@ -17,30 +17,6 @@
         "SLACK_MCP_CHANNELS_CACHE": "${SLACK_MCP_CHANNELS_CACHE}",
         "SLACK_MCP_ADD_MESSAGE_TOOL":"true"
       }
-    },
-    "gitlab": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@zereight/mcp-gitlab@${GITLAB_MCP_V}"
-      ],
-      "env": {
-        "GITLAB_PERSONAL_ACCESS_TOKEN": "${GITLAB_TOKEN}",
-        "GITLAB_API_URL": "${GITLAB_URL}",
-        "USE_PIPELINE": "true"
-      }
-    },
-    "k8s": {
-      "command": "npx",
-      "args": [
-        "-y", 
-        "kubernetes-mcp-server@${K8S_MCP_V}",
-        "--kubeconfig",
-        "${K8S_MCP_KUBECONFIG_PATH}",
-        "--disable-destructive",
-        "--toolsets",
-        "core"
-      ]
     }
   }
 }

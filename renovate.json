@@ -33,46 +33,45 @@
     },
     {
       "customType": "regex",
-      "description": "Update Slack MCP server version",
+      "description": "Update glab CLI version",
       "managerFilePatterns": [
         "Containerfile"
       ],
       "matchStrings": [
-        "ENV\\s+SLACK_MCP_V\\s+v(?<currentValue>\\d+\\.\\d+\\.\\d+)"
+        "ENV\\s+GLAB_V\\s+(?<currentValue>\\d+\\.\\d+\\.\\d+)"
       ],
       "datasourceTemplate": "github-releases",
-      "depNameTemplate": "korotovsky/slack-mcp-server",
+      "depNameTemplate": "gitlab-org/cli",
       "extractVersionTemplate": "^v?(?<version>\\d+\\.\\d+\\.\\d+)$",
-      "versioningTemplate": "regex:^v?(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$",
-      "autoReplaceStringTemplate": "ENV SLACK_MCP_V v{{newVersion}}"
+      "autoReplaceStringTemplate": "ENV GLAB_V {{newVersion}}"
     },
     {
       "customType": "regex",
-      "description": "Update GitLab MCP npm package version",
+      "description": "Update kubectl version",
       "managerFilePatterns": [
         "Containerfile"
       ],
       "matchStrings": [
-        "ENV\\s+GITLAB_MCP_V\\s+(?<currentValue>\\d+\\.\\d+\\.\\d+)"
-      ],
-      "datasourceTemplate": "npm",
-      "depNameTemplate": "@zereight/mcp-gitlab",
-      "autoReplaceStringTemplate": "ENV GITLAB_MCP_V {{newValue}}"
-    },
-    {
-      "customType": "regex",
-      "description": "Update Kubernetes MCP server version",
-      "managerFilePatterns": [
-        "Containerfile"
-      ],
-      "matchStrings": [
-        "ENV\\s+K8S_MCP_V\\s+v(?<currentValue>\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?)"
+        "ENV\\s+KUBECTL_V\\s+(?<currentValue>\\d+\\.\\d+\\.\\d+)"
       ],
       "datasourceTemplate": "github-releases",
-      "depNameTemplate": "containers/kubernetes-mcp-server",
-      "extractVersionTemplate": "^v?(?<version>\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?)$",
-      "versioningTemplate": "regex:^v?(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-[0-9A-Za-z.-]+)?$",
-      "autoReplaceStringTemplate": "ENV K8S_MCP_V v{{newVersion}}"
+      "depNameTemplate": "kubernetes/kubernetes",
+      "extractVersionTemplate": "^v?(?<version>\\d+\\.\\d+\\.\\d+)$",
+      "autoReplaceStringTemplate": "ENV KUBECTL_V {{newVersion}}"
+    },
+    {
+      "customType": "regex",
+      "description": "Update Claudio Skills version",
+      "managerFilePatterns": [
+        "Containerfile"
+      ],
+      "matchStrings": [
+        "ENV\\s+CLAUDIO_SKILLS_V\\s+v(?<currentValue>\\d+\\.\\d+\\.\\d+)"
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "aipcc-cicd/claudio-skills",
+      "extractVersionTemplate": "^v?(?<version>\\d+\\.\\d+\\.\\d+)$",
+      "autoReplaceStringTemplate": "ENV CLAUDIO_SKILLS_V v{{newVersion}}"
     }
   ],
   "packageRules": []
