@@ -1,8 +1,8 @@
 # claudio
 
-OCI image to make claude code portable; the model is being setup to use through Google Vertex AI API. 
+OCI image to make claude code portable; the model is being setup to use through Google Vertex AI API.
 
-The image also contains a list of curated mcp servers setup and a base memory for claude ensuring it uses them as expected. 
+The image includes the Slack MCP server for communication, along with `glab` and `kubectl` CLIs. Additional functionality is provided through the [claudio-skills marketplace](https://github.com/aipcc-cicd/claudio-skills).
 
 # Integrations
 
@@ -22,19 +22,15 @@ On Developer Tools go to:
 Since it is slack enterpise we need to get value for User-Agent. To get it from same place we check Networking and check request headers to get the value,
 it should be something similar to `Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36`
 
-Disclaimer, the first time you reuse those Tokens you will probably be signed off as precaution, the second time you sign in the tokens should last. 
+Disclaimer, the first time you reuse those Tokens you will probably be signed off as precaution, the second time you sign in the tokens should last.
 
-## Gitlab CICD
+## GitLab
 
-To manage gitlab CICD integration claudio will use https://gitlab.com/fforster/gitlab-mcp 
+GitLab integration is provided through the `glab` CLI tool and the claudio-skills marketplace. The `glab` CLI is pre-installed in the container.
 
-For Auth check https://gitlab.com/fforster/gitlab-mcp#authentication
+## Kubernetes / OpenShift
 
-## Openshift / K8s 
-
-To manage Openshift / K8s integration claudio will use https://github.com/containers/kubernetes-mcp-server
-
-We will need to add the kubeconfig as part of the execution and set its path with `K8S_MCP_KUBECONFIG_PATH`
+Kubernetes and OpenShift management is handled through `kubectl` (pre-installed) and skills from the claudio-skills marketplace.
 
 # Build
 
@@ -80,7 +76,6 @@ podman run -it --rm --user 0 \
         -v ${PWD}:/home/default/workdir:z \
         -v claudio-gcp:/root/.config/gcloud:Z \
         -v claudio-mcp-slack:/root/claude/mcp/slack:Z \
-        -e GITLAB_URL='https://gitlab.com' \
         -e GITLAB_TOKEN='...' \
         -e ANTHROPIC_VERTEX_PROJECT_ID=... \
         -e ANTHROPIC_VERTEX_PROJECT_QUOTA=... \
@@ -108,7 +103,6 @@ podman run -it --rm --user 0 \
         -v claudio-gcp:/root/.config/gcloud:Z \
         # Optional
         -v claudio-mcp-slack:/root/claude/mcp/slack:Z \
-        -e GITLAB_URL='https://gitlab.com' \
         -e GITLAB_TOKEN='...' \
         -e ANTHROPIC_VERTEX_PROJECT_ID=... \
         -e ANTHROPIC_VERTEX_PROJECT_QUOTA=... \
@@ -125,7 +119,6 @@ Claudio on a host where user is already logged in on gcloud:
 podman run -it --rm -user 0 \
         -v ${PWD}/kubecofing:/opt/k8s/kubeconfig:z \
         -v /home/$USER/.conf/gcloud:/root/.config/gcloud:z \
-        -e GITLAB_URL='https://gitlab.com' \
         -e GITLAB_TOKEN='...' \
         -e ANTHROPIC_VERTEX_PROJECT_ID=... \
         -e ANTHROPIC_VERTEX_PROJECT_QUOTA=... \
@@ -142,7 +135,6 @@ Claudio one-time prompt
 podman run -it --rm -user 0 \
         -v ${PWD}/kubecofing:/opt/k8s/kubeconfig:z \
         -v /home/$USER/.conf/gcloud:/root/.config/gcloud:z \
-        -e GITLAB_URL='https://gitlab.com' \
         -e GITLAB_TOKEN='...' \
         -e ANTHROPIC_VERTEX_PROJECT_ID=... \
         -e ANTHROPIC_VERTEX_PROJECT_QUOTA=... \

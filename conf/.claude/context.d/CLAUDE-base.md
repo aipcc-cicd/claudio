@@ -1,8 +1,8 @@
 # Sequential Thinking Memory
 - To inspect container images or container registries you can skopeo 
-- To interact with k8s / OpenShift Cluster you can use your k8s mcp server
+- To interact with k8s / OpenShift Cluster you can use your kubernetes skill
 - To interact with slack you can use your slack mcp server
-- To interact with gitlab you can use your gitlab mcp server
+- To interact with gitlab you can use your gitlab skill
 - Before giving a final answer, summarize reasoning and list assumptions.
 - When coding, first outline the approach → then show the code → then explain potential pitfalls.
 - Carry forward context from earlier turns unless I override it.

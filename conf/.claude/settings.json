@@ -5,15 +5,22 @@
       "mcp__slack__channels_list",
       "mcp__slack__conversations_search_messages",
       "mcp__slack__conversations_add_message",
-      "mcp__gitlab__get_commit",
-      "mcp__gitlab__list_merge_requests",
-      "mcp__gitlab__get_merge_request",
-      "mcp__gitlab__get_pipeline",
-      "mcp__gitlab__get_pipeline_job",
-      "mcp__k8s__resources_list",
-      "mcp__k8s__resources_get"
+      "Skill(claudio-plugin:gitlab)",
+      "Skill(claudio-plugin:konflux)",
+      "Skill(claudio-plugin:kubernetes)"
     ],
     "deny": [],
     "ask": []
+  },
+  "extraKnownMarketplaces": {
+    "claudio-skills": {
+      "source": {
+        "source": "directory",
+        "path": "/home/default/claudio-skills"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "claudio-plugin@claudio-skills": true
   }
 }

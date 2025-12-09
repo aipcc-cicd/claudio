@@ -6,7 +6,7 @@
     "tengu_disable_bypass_permissions_mode": false
   },
   "projects": {
-    "/": {
+    "/home/default/workdir": {
       "allowedTools": [],
       "history": [],
       "mcpContextUris": [],
