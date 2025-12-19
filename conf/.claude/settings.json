@@ -7,7 +7,9 @@
       "mcp__slack__conversations_add_message",
       "Skill(claudio-plugin:gitlab)",
       "Skill(claudio-plugin:konflux)",
-      "Skill(claudio-plugin:kubernetes)"
+      "Skill(claudio-plugin:kubernetes)",
+      "Skill(claudio-plugin:containers)",
+      "Bash(/home/default/.claude/plugins/cache/claudio-skills/claudio-plugin/*/skills/konflux/scripts/generate_release_yaml.py:*)"
     ],
     "deny": [],
     "ask": []
