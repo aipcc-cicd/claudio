@@ -38,9 +38,13 @@ CS_REF ?= main
 # CS_REF ?= v0.1.0
 
 # Build actions
-.PHONY: oci-build oci-save oci-load oci-push-arch oci-manifest-build oci-manifest-push oci-tag oci-push
+.PHONY: oci-build oci-rebuild oci-save oci-load oci-push-arch oci-manifest-build oci-manifest-push oci-tag oci-push
 
 oci-build:
+	${CONTAINER_MANAGER} build --build-arg CS_REF=$(CS_REF) --build-arg CS_REF_TYPE=$(CS_REF_TYPE) -t $(IMAGE_NAME) .
+
+oci-rebuild:
+	${CONTAINER_MANAGER} rmi ${IMAGE_NAME}
 	${CONTAINER_MANAGER} build --build-arg CS_REF=$(CS_REF) --build-arg CS_REF_TYPE=$(CS_REF_TYPE) -t $(IMAGE_NAME) .
 
 oci-save:

@@ -1,9 +1,13 @@
 {
+  "model": "claude-sonnet-4-6",
   "permissions": {
     "allow": [
-      "Skill(claudio-plugin:gitlab)",
-      "Skill(claudio-plugin:konflux)",
-      "Skill(claudio-plugin:kubernetes)"
+      "Skill(claudio-plugin:aws-log-analyzer)",
+      "Skill(claudio-plugin:gitlab-job-analyzer)",
+      "Skill(claudio-plugin:konflux-release)",
+      "Skill(claudio-plugin:slack-utilities)",
+      "Bash(ls *)",
+      "Read(//home/claudio/.claude/**)"
     ],
     "deny": [],
     "ask": []

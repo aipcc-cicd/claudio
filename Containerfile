@@ -56,7 +56,7 @@ USER root
 ENV HOME /home/claudio
 
 # Base for claudio image
-RUN microdnf install -y skopeo podman unzip gzip; \
+RUN microdnf install -y skopeo podman unzip gzip git; \
     useradd claudio; \
     chown -R claudio:0 ${HOME}; \
     chmod -R ug+rwx ${HOME}

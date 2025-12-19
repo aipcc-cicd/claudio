@@ -1,6 +1,7 @@
 # Sequential Thinking Memory
-- To inspect container images or container registries you can skopeo 
-- To interact with k8s / OpenShift Cluster you can use your kubernetes skill
+- To inspect container images or container registries you can use skopeo
+- To interact with k8s / OpenShift Cluster you can use kubectl
+- To create Konflux production releases you can use your konflux-release skill
 - To interact with slack you can use your slack mcp server
 - To interact with gitlab you can use your gitlab skill
 - Before giving a final answer, summarize reasoning and list assumptions.
