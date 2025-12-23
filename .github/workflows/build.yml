@@ -30,7 +30,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Set image repo and tag based on event
       run: |
@@ -57,7 +57,7 @@ jobs:
         make oci-save
 
     - name: Upload image artifact
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: claudio-${{ matrix.arch }}
         path: claudio-${{ matrix.arch }}.tar
@@ -70,7 +70,7 @@ jobs:
 
     steps:
     - name: Download claudio images
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         pattern: claudio-*
 
@@ -79,7 +79,7 @@ jobs:
         echo "${{ env.GHCR_IMAGE_REPO }}:pr-${{ github.event.number }}" > claudio-image
 
     - name: Upload combined artifacts
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: claudio-arm64-and-amd64
         path: claudio-*
@@ -95,10 +95,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Download claudio images
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         pattern: claudio-*
 
@@ -136,10 +136,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Download claudio images
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         pattern: claudio-*
 
