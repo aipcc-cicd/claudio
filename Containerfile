@@ -33,7 +33,7 @@ ENV CLAUDE_CODE_USE_VERTEX=1 \
 RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_V} 
 
 # GCloud
-ENV GCLOUD_V 550.0.0
+ENV GCLOUD_V 551.0.0
 ENV GCLOUD_BASE_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_V}"
 ENV GCLOUD_URL="${GCLOUD_BASE_URL}-linux-x86_64.tar.gz"
 RUN if [ "$TARGETARCH" = "arm64" ]; then export GCLOUD_URL="${GCLOUD_BASE_URL}-linux-arm.tar.gz"; fi && \
