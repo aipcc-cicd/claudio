@@ -15,7 +15,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-FROM registry.access.redhat.com/ubi10/nodejs-22@sha256:fd5725a11fd0e6d239b1b3b9d84536b7a81a288401c5862c4c59f06ed82a3cff
+FROM registry.access.redhat.com/ubi10/nodejs-22@sha256:6255495e60aeef5e64ba014c15adfd8934065330b0ff1fd2aa28b291b4c80a3d
 
 ARG TARGETARCH
 USER root
@@ -26,14 +26,14 @@ RUN dnf install -y skopeo podman jq
 
 # Claude
 # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
-ENV CLAUDE_V 2.1.17
+ENV CLAUDE_V 2.1.22
 ENV CLAUDE_CODE_USE_VERTEX=1 \
     CLOUD_ML_REGION=us-east5 \
     DISABLE_AUTOUPDATER=1
 RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_V} 
 
 # GCloud
-ENV GCLOUD_V 553.0.0
+ENV GCLOUD_V 554.0.0
 ENV GCLOUD_BASE_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_V}"
 ENV GCLOUD_URL="${GCLOUD_BASE_URL}-linux-x86_64.tar.gz"
 RUN if [ "$TARGETARCH" = "arm64" ]; then export GCLOUD_URL="${GCLOUD_BASE_URL}-linux-arm.tar.gz"; fi && \
