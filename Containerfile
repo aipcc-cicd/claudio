@@ -15,7 +15,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-FROM registry.access.redhat.com/ubi10/nodejs-22@sha256:a712f54c10ebd74ce6e6609bb53308e285703fe791f6299557a54bedb4bf537a
+FROM registry.access.redhat.com/ubi10/nodejs-22@sha256:6e71f92bb0ad462e3caf186090dbcc7897d218345a8fc55678635d31ebc211a9
 
 ARG TARGETARCH
 USER root
@@ -33,7 +33,7 @@ ENV CLAUDE_CODE_USE_VERTEX=1 \
 RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_V} 
 
 # GCloud
-ENV GCLOUD_V 554.0.0
+ENV GCLOUD_V 555.0.0
 ENV GCLOUD_BASE_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_V}"
 ENV GCLOUD_URL="${GCLOUD_BASE_URL}-linux-x86_64.tar.gz"
 RUN if [ "$TARGETARCH" = "arm64" ]; then export GCLOUD_URL="${GCLOUD_BASE_URL}-linux-arm.tar.gz"; fi && \
