@@ -15,7 +15,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-FROM registry.access.redhat.com/ubi10/nodejs-22@sha256:42478ccd19d23f2185d34fcec544cf6d91610955eec5c9300a7e2d5639cb2f42
+FROM registry.access.redhat.com/ubi10/nodejs-22@sha256:665dd47544d8d032c22bd93aaab6d46dba96e2c0ec03707924212e88b02add8f
 
 ARG TARGETARCH
 USER root
@@ -26,7 +26,7 @@ RUN dnf install -y skopeo podman jq
 
 # Claude
 # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
-ENV CLAUDE_V 2.1.31
+ENV CLAUDE_V 2.1.34
 ENV CLAUDE_CODE_USE_VERTEX=1 \
     CLOUD_ML_REGION=us-east5 \
     DISABLE_AUTOUPDATER=1
