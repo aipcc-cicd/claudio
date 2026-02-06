@@ -27,11 +27,21 @@ IMAGE_SOURCE_TAG ?= $(IMAGE_TAG)
 # Artifact naming
 ARTIFACT_NAME ?= claudio
 
+# Claudio skills
+#
+# CS_REF_TYPE can be tag, branch or pr
+# Example when we create a tag version for claudio
+CS_REF_TYPE  ?= branch
+CS_REF ?= main
+# Example when we create a tag version for claudio
+# CS_REF_TYPE  ?= tag
+# CS_REF ?= v0.1.0
+
 # Build actions
 .PHONY: oci-build oci-save oci-load oci-push-arch oci-manifest-build oci-manifest-push oci-tag oci-push
 
 oci-build:
-	${CONTAINER_MANAGER} build -t $(IMAGE_NAME) .
+	${CONTAINER_MANAGER} build --build-arg CS_REF=$(CS_REF) --build-arg CS_REF_TYPE=$(CS_REF_TYPE) -t $(IMAGE_NAME) .
 
 oci-save:
 	${CONTAINER_MANAGER} save -m -o $(ARTIFACT_NAME).tar $(IMAGE_NAME)

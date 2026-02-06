@@ -1,7 +1,7 @@
 {
   "numStartups": 1,
   "installMethod": "unknown",
-  "autoUpdates": true,
+  "autoUpdates": false,
   "cachedStatsigGates": {
     "tengu_disable_bypass_permissions_mode": false
   },

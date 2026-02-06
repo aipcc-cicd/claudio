@@ -22,7 +22,7 @@ USER root
 ENV HOME /home/default
 
 # Basic tools
-RUN dnf install -y skopeo podman jq 
+RUN dnf install -y skopeo podman 
 
 # Claude
 # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
@@ -30,18 +30,24 @@ ENV CLAUDE_V 2.1.34
 ENV CLAUDE_CODE_USE_VERTEX=1 \
     CLOUD_ML_REGION=us-east5 \
     DISABLE_AUTOUPDATER=1
-RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_V} 
+ENV CLAUDE_BASE_URL="https://github.com/anthropics/claude-code/releases/download/v${CLAUDE_V}/claude-code-v${CLAUDE_V}"
+RUN curl -fsSL https://claude.ai/install.sh | bash -s ${CLAUDE_V} && \
+    ln -s ~/.local/bin/claude /usr/local/bin/claude
+    
 
 # GCloud
 ENV GCLOUD_V 555.0.0
 ENV GCLOUD_BASE_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_V}"
 ENV GCLOUD_URL="${GCLOUD_BASE_URL}-linux-x86_64.tar.gz"
-RUN if [ "$TARGETARCH" = "arm64" ]; then export GCLOUD_URL="${GCLOUD_BASE_URL}-linux-arm.tar.gz"; fi && \
-    curl -L ${GCLOUD_URL} -o gcloud.tar.gz && \
-    tar -xzf gcloud.tar.gz -C /opt && \
-    /opt/google-cloud-sdk/install.sh -q && \
-    ln -s /opt/google-cloud-sdk/bin/gcloud /usr/local/bin/gcloud && \
-    rm gcloud.tar.gz 
+RUN set -eux; \
+    if [ "$TARGETARCH" = "arm64" ]; then \
+        export GCLOUD_URL="${GCLOUD_BASE_URL}-linux-arm.tar.gz"; \
+    fi; \
+    curl -L "$GCLOUD_URL" -o gcloud.tar.gz; \
+    tar -xzf gcloud.tar.gz -C /opt; \
+    /opt/google-cloud-sdk/install.sh -q; \
+    ln -s /opt/google-cloud-sdk/bin/gcloud /usr/local/bin/gcloud; \
+    rm gcloud.tar.gz
 
 # Slack
 # https://github.com/korotovsky/slack-mcp-server/releases
@@ -64,18 +70,36 @@ ENV KUBECTL_V 1.35.0
 RUN curl -L https://dl.k8s.io/release/v${KUBECTL_V}/bin/linux/${TARGETARCH}/kubectl -o /usr/local/bin/kubectl && \
     chmod +x /usr/local/bin/kubectl
 
-# Claudio Skills
-# https://github.com/aipcc-cicd/claudio-skills/releases
-ENV CLAUDIO_SKILLS_V v0.1.0
 
 # Conf
 COPY conf/ ${HOME}/
 COPY scripts/ /usr/local/bin/
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
-# Clone the skills marketplace and generate plugin configs (as root)
-RUN git clone --branch ${CLAUDIO_SKILLS_V} --depth 1 https://github.com/aipcc-cicd/claudio-skills.git ${HOME}/claudio-skills && \
-    /usr/local/bin/generate-plugin-configs.sh ${HOME}/claudio-skills ${HOME}/.claude/plugins
+# Claudio Skills
+ARG CS_REF_TYPE
+ARG CS_REF
+ENV CS_REPO https://github.com/aipcc-cicd/claudio-skills.git
+RUN set -eux; \
+    git init "${HOME}/claudio-skills"; \
+    cd "${HOME}/claudio-skills"; \
+    \
+    git remote add origin "${CS_REPO}"; \
+    if [ "${CS_REF_TYPE}" = "pr" ]; then \
+        git fetch --depth 1 origin "pull/${CS_REF}/head"; \
+    else \
+        git fetch --depth 1 origin "${CS_REF}"; \
+    fi; \
+    git checkout FETCH_HEAD; \
+    \
+    for script in "${HOME}/claudio-skills"/claudio-plugin/tools/*/install.sh; do \
+        [ -f "$script" ] && bash "$script"; \
+    done; \
+    \
+    /usr/local/bin/generate-plugin-configs.sh \
+        "${HOME}/claudio-skills" \
+        "${HOME}/.claude/plugins"
+
 
 # Setup non root user
 WORKDIR /home/default
