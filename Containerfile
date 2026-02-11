@@ -57,13 +57,6 @@ ENV SLACK_MCP_CUSTOM_TLS=1 \
     SLACK_MCP_USERS_CACHE=${HOME}/claude/mcp/slack/.users_cache.json \
     SLACK_MCP_CHANNELS_CACHE=${HOME}/claude/mcp/slack/.channels_cache_v2.json
 
-# Glab CLI
-# https://gitlab.com/gitlab-org/cli/-/releases
-ENV GLAB_V 1.78.3
-RUN curl -L https://gitlab.com/gitlab-org/cli/-/releases/v${GLAB_V}/downloads/glab_${GLAB_V}_linux_${TARGETARCH}.rpm -o glab.rpm && \
-    dnf install -y ./glab.rpm && \
-    rm glab.rpm
-
 # Kubectl
 # https://kubernetes.io/releases/
 ENV KUBECTL_V 1.35.1
