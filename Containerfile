@@ -15,7 +15,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-FROM registry.access.redhat.com/ubi10/nodejs-22@sha256:665dd47544d8d032c22bd93aaab6d46dba96e2c0ec03707924212e88b02add8f
+FROM registry.access.redhat.com/ubi10/nodejs-22@sha256:82bca99194711307ed88bc0728e8f625b47e63997a9249683efb47f555ba8c23
 
 ARG TARGETARCH
 USER root
@@ -26,7 +26,7 @@ RUN dnf install -y skopeo podman
 
 # Claude
 # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
-ENV CLAUDE_V 2.1.37
+ENV CLAUDE_V 2.1.39
 ENV CLAUDE_CODE_USE_VERTEX=1 \
     CLOUD_ML_REGION=us-east5 \
     DISABLE_AUTOUPDATER=1
@@ -36,7 +36,7 @@ RUN curl -fsSL https://claude.ai/install.sh | bash -s ${CLAUDE_V} && \
     
 
 # GCloud
-ENV GCLOUD_V 555.0.0
+ENV GCLOUD_V 556.0.0
 ENV GCLOUD_BASE_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_V}"
 ENV GCLOUD_URL="${GCLOUD_BASE_URL}-linux-x86_64.tar.gz"
 RUN set -eux; \
@@ -66,7 +66,7 @@ RUN curl -L https://gitlab.com/gitlab-org/cli/-/releases/v${GLAB_V}/downloads/gl
 
 # Kubectl
 # https://kubernetes.io/releases/
-ENV KUBECTL_V 1.35.0
+ENV KUBECTL_V 1.35.1
 RUN curl -L https://dl.k8s.io/release/v${KUBECTL_V}/bin/linux/${TARGETARCH}/kubectl -o /usr/local/bin/kubectl && \
     chmod +x /usr/local/bin/kubectl
 
