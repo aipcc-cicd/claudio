@@ -22,7 +22,7 @@ USER root
 ENV HOME /home/default
 
 # Basic tools
-RUN dnf install -y skopeo podman 
+RUN dnf install -y skopeo podman python3-pip
 
 # Claude
 # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
