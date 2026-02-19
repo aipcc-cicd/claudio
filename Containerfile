@@ -22,7 +22,7 @@ USER root
 ENV HOME /home/default
 
 # Basic tools
-RUN dnf install -y skopeo podman 
+RUN dnf install -y skopeo podman python3-pip
 
 # Claude
 # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
@@ -87,6 +87,10 @@ RUN set -eux; \
     \
     for script in "${HOME}/claudio-skills"/claudio-plugin/tools/*/install.sh; do \
         [ -f "$script" ] && bash "$script"; \
+    done; \
+    \
+    for req in "${HOME}/claudio-skills"/claudio-plugin/tools/python/*-requirements.txt; do \
+        [ -f "$req" ] && pip install --no-cache-dir -r "$req"; \
     done; \
     \
     /usr/local/bin/generate-plugin-configs.sh \

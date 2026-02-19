@@ -61,6 +61,46 @@ Available targets:
 - `oci-manifest-build` - Create multi-arch manifest from arch-tagged images
 - `oci-manifest-push` - Push manifest to registry
 
+## Claudio Skills Reference
+
+During the image build, claudio clones [claudio-skills](https://github.com/aipcc-cicd/claudio-skills) into `/home/default/claudio-skills/` and:
+
+1. **Fetches the specified git ref** — a branch, tag, or pull request head
+2. **Runs tool installers** — iterates over `claudio-plugin/tools/*/install.sh` and executes each one (e.g. jq, python dependencies)
+3. **Generates plugin configs** — registers skills and tools so Claude can discover them at runtime
+
+The git ref is controlled by two build args:
+- `CS_REF_TYPE` — one of `branch`, `tag`, or `pr` (default: `branch`)
+- `CS_REF` — the branch name, tag name, or PR number (default: `main`)
+
+```bash
+# From a branch (default)
+CS_REF_TYPE=branch CS_REF=main make oci-build
+
+# From a tag
+CS_REF_TYPE=tag CS_REF=v0.1.0 make oci-build
+
+# From a pull request
+CS_REF_TYPE=pr CS_REF=9 make oci-build
+```
+
+### Testing claudio-skills changes in downstream images
+
+When developing changes to claudio-skills that affect a downstream image (e.g. aipcc-claudio), you can test end-to-end before merging:
+
+1. Open a PR in claudio-skills (e.g. PR #9)
+2. Build the claudio base image referencing that PR:
+   ```bash
+   CS_REF_TYPE=pr CS_REF=9 make oci-build
+   ```
+   This produces a local image tagged `quay.io/aipcc-cicd/claudio:v1.0.0-dev`.
+3. In the downstream repo, point the `FROM` line at that local image (or tag it to match the expected base tag) and build:
+   ```bash
+   # In aipcc-claudio
+   make oci-build
+   ```
+4. Run the resulting container and verify the changes work as expected.
+
 # Usage
 
 In order to make claudio OpenShift compliant the default user for the container is default, it is also part of the root group, under some circumstances when mapping host volumes podman is not able to access the volume (even with the right permissions), to avoid that siatuion we suggest when running locally to use `--user 0` to enforce default behavior by podman.
