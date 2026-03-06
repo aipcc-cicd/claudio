@@ -18,7 +18,7 @@ FROM registry.access.redhat.com/ubi10@sha256:f573194e8e5231f1c9340c497e1f8d9aa9d
 ARG TARGETARCH
 
 # GCloud
-ENV GCLOUD_V 558.0.0
+ENV GCLOUD_V 559.0.0
 ENV GCLOUD_BASE_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_V}"
 ENV GCLOUD_URL="${GCLOUD_BASE_URL}-linux-x86_64.tar.gz"
 RUN set -eux; \
