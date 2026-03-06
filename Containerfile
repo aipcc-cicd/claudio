@@ -26,7 +26,7 @@ RUN dnf install -y skopeo podman
 
 # Claude
 # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
-ENV CLAUDE_V 2.1.63
+ENV CLAUDE_V 2.1.70
 ENV CLAUDE_CODE_USE_VERTEX=1 \
     CLOUD_ML_REGION=us-east5 \
     DISABLE_AUTOUPDATER=1
@@ -36,7 +36,7 @@ RUN curl -fsSL https://claude.ai/install.sh | bash -s ${CLAUDE_V} && \
     
 
 # GCloud
-ENV GCLOUD_V 558.0.0
+ENV GCLOUD_V 559.0.0
 ENV GCLOUD_BASE_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_V}"
 ENV GCLOUD_URL="${GCLOUD_BASE_URL}-linux-x86_64.tar.gz"
 RUN set -eux; \
