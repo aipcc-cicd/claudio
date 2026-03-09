@@ -1,10 +1,6 @@
 {
   "permissions": {
     "allow": [
-      "mcp__slack__conversations_history",
-      "mcp__slack__channels_list",
-      "mcp__slack__conversations_search_messages",
-      "mcp__slack__conversations_add_message",
       "Skill(claudio-plugin:gitlab)",
       "Skill(claudio-plugin:konflux)",
       "Skill(claudio-plugin:kubernetes)"
@@ -16,7 +12,7 @@
     "claudio-skills": {
       "source": {
         "source": "directory",
-        "path": "/home/default/claudio-skills"
+        "path": "/home/claudio/claudio-skills"
       }
     }
   },

@@ -51,4 +51,4 @@ for c in ~/.claude/context.d/*.md; do
 done
 
 # Run claude
-exec claude --mcp-config ~/.claude/mcp.d/*.json "$@"
+exec claude "$@"

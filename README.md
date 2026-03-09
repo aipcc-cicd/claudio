@@ -2,35 +2,7 @@
 
 OCI image to make claude code portable; the model is being setup to use through Google Vertex AI API.
 
-The image includes the Slack MCP server for communication, along with `glab` and `kubectl` CLIs. Additional functionality is provided through the [claudio-skills marketplace](https://github.com/aipcc-cicd/claudio-skills).
-
-# Integrations
-
-## Slack
-
-To manage slack integration claudio will use https://github.com/korotovsky/slack-mcp-server, 
-
-To get values for them the easiest way is to authenticate to your slack workspace in chrome/chromium browser
-
-On same page go to More Tools -> Developer Tools
-
-On Developer Tools go to:
-
-* XOXC: Application -> Storage -> Local Storage -> https>//app.slack.com -> localConfig_v2 (key) -> 'token' key inside the json value 
-* XOXD: Application -> Storage -> Cookies -> https>//app.slack.com -> d (key)
-
-Since it is slack enterpise we need to get value for User-Agent. To get it from same place we check Networking and check request headers to get the value,
-it should be something similar to `Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36`
-
-Disclaimer, the first time you reuse those Tokens you will probably be signed off as precaution, the second time you sign in the tokens should last.
-
-## GitLab
-
-GitLab integration is provided through the `glab` CLI tool and the claudio-skills marketplace. The `glab` CLI is pre-installed in the container.
-
-## Kubernetes / OpenShift
-
-Kubernetes and OpenShift management is handled through `kubectl` (pre-installed) and skills from the claudio-skills marketplace.
+Additional functionality is provided through the [claudio-skills marketplace](https://github.com/aipcc-cicd/claudio-skills).
 
 # Build
 
@@ -138,17 +110,14 @@ podman volume create claudio-mcp-slack
 
 # Run claudio
 podman run -it --rm --user 0 \
-        -v ${PWD}/kubecofing:/opt/k8s/kubeconfig:z \
+        -v ${PWD}/kubecofing:/home/claudio/.kube/config:z \
         # Optional
-        -v claudio-gcp:/root/.config/gcloud:Z \
-        # Optional
-        -v claudio-mcp-slack:/root/claude/mcp/slack:Z \
+        -v claudio-gcp:/home/claudio/.config/gcloud:Z \
         -e GITLAB_TOKEN='...' \
         -e ANTHROPIC_VERTEX_PROJECT_ID=... \
         -e ANTHROPIC_VERTEX_PROJECT_QUOTA=... \
-        -e SLACK_MCP_XOXC_TOKEN='xoxc-...' \
-        -e SLACK_MCP_XOXD_TOKEN='xoxd-...' \
-        -e K8S_MCP_KUBECONFIG_PATH=/opt/k8s/kubeconfig \
+        -e SLACK_XOXC_TOKEN='xoxc-...' \
+        -e SLACK_XOXD_TOKEN='xoxd-...' \
         quay.io/aipcc-cicd/claudio:v1.0.0-dev
 ```
 
@@ -157,14 +126,13 @@ Claudio on a host where user is already logged in on gcloud:
 ```bash
 # Run claudio
 podman run -it --rm -user 0 \
-        -v ${PWD}/kubecofing:/opt/k8s/kubeconfig:z \
-        -v /home/$USER/.conf/gcloud:/root/.config/gcloud:z \
+        -v ${PWD}/kubecofing:/home/claudio/.kube/config:z \
+        -v /home/$USER/.conf/gcloud:/home/claudio/.config/gcloud:z \
         -e GITLAB_TOKEN='...' \
         -e ANTHROPIC_VERTEX_PROJECT_ID=... \
         -e ANTHROPIC_VERTEX_PROJECT_QUOTA=... \
-        -e SLACK_MCP_XOXC_TOKEN='xoxc-...' \
-        -e SLACK_MCP_XOXD_TOKEN='xoxd-...' \
-        -e K8S_MCP_KUBECONFIG_PATH=/opt/k8s/kubeconfig \
+        -e SLACK_XOXC_TOKEN='xoxc-...' \
+        -e SLACK_XOXD_TOKEN='xoxd-...' \
         quay.io/aipcc-cicd/claudio:v1.0.0-dev
 ```
 
@@ -173,14 +141,13 @@ Claudio one-time prompt
 ```bash
 # Run claudio
 podman run -it --rm -user 0 \
-        -v ${PWD}/kubecofing:/opt/k8s/kubeconfig:z \
-        -v /home/$USER/.conf/gcloud:/root/.config/gcloud:z \
+        -v ${PWD}/kubecofing:/home/claudio/.kube/config:z \
+        -v /home/$USER/.conf/gcloud:/home/claudio/.config/gcloud:z \
         -e GITLAB_TOKEN='...' \
         -e ANTHROPIC_VERTEX_PROJECT_ID=... \
         -e ANTHROPIC_VERTEX_PROJECT_QUOTA=... \
-        -e SLACK_MCP_XOXC_TOKEN='xoxc-...' \
-        -e SLACK_MCP_XOXD_TOKEN='xoxd-...' \
-        -e K8S_MCP_KUBECONFIG_PATH=/opt/k8s/kubeconfig \
+        -e SLACK_XOXC_TOKEN='xoxc-...' \
+        -e SLACK_XOXD_TOKEN='xoxd-...' \
         quay.io/aipcc-cicd/claudio:v1.0.0-dev \
                 -p "do something for me Claudio"
 ```
