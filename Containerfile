@@ -75,12 +75,6 @@ RUN set -eux; \
     /opt/google-cloud-sdk/install.sh -q; \
     ln -s /opt/google-cloud-sdk/bin/gcloud /usr/local/bin/gcloud; 
 
-# Kubectl
-# https://kubernetes.io/releases/
-ENV KUBECTL_V 1.35.2
-RUN curl -L https://dl.k8s.io/release/v${KUBECTL_V}/bin/linux/${TARGETARCH}/kubectl -o /usr/local/bin/kubectl && \
-    chmod +x /usr/local/bin/kubectl
-
 # Conf
 COPY conf/ ${HOME}/
 COPY scripts/ /usr/local/bin/
