@@ -6,8 +6,8 @@
       "Skill(claudio-plugin:gitlab-job-analyzer)",
       "Skill(claudio-plugin:konflux-release)",
       "Skill(claudio-plugin:slack-utilities)",
-      "Bash(ls *)",
-      "Read(//home/claudio/.claude/**)"
+      "Bash(*)",
+      "Read(/home/claudio/.claude/**)"
     ],
     "deny": [],
     "ask": []
