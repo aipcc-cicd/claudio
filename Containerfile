@@ -57,10 +57,8 @@ ENV HOME /home/claudio
 
 # Base for claudio image
 RUN microdnf install -y skopeo podman unzip gzip git; \
-    useradd claudio; \
-    chown -R claudio:0 ${HOME}; \
-    chmod -R ug+rwx ${HOME}
-
+    useradd claudio 
+    
 # Claude
 # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
 ENV CLAUDE_V 2.1.72
@@ -104,6 +102,8 @@ RUN set -eux; \
         "${HOME}/.claude/plugins"
 
 # Claudio
+RUN chown -R claudio:0 ${HOME}; \
+    chmod -R ug+rwx ${HOME}
 USER claudio
 WORKDIR /home/claudio
 
