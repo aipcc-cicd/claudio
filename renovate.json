@@ -33,34 +33,6 @@
     },
     {
       "customType": "regex",
-      "description": "Update glab CLI version",
-      "managerFilePatterns": [
-        "Containerfile"
-      ],
-      "matchStrings": [
-        "ENV\\s+GLAB_V\\s+(?<currentValue>\\d+\\.\\d+\\.\\d+)"
-      ],
-      "datasourceTemplate": "github-releases",
-      "depNameTemplate": "gitlab-org/cli",
-      "extractVersionTemplate": "^v?(?<version>\\d+\\.\\d+\\.\\d+)$",
-      "autoReplaceStringTemplate": "ENV GLAB_V {{newVersion}}"
-    },
-    {
-      "customType": "regex",
-      "description": "Update kubectl version",
-      "managerFilePatterns": [
-        "Containerfile"
-      ],
-      "matchStrings": [
-        "ENV\\s+KUBECTL_V\\s+(?<currentValue>\\d+\\.\\d+\\.\\d+)"
-      ],
-      "datasourceTemplate": "github-releases",
-      "depNameTemplate": "kubernetes/kubernetes",
-      "extractVersionTemplate": "^v?(?<version>\\d+\\.\\d+\\.\\d+)$",
-      "autoReplaceStringTemplate": "ENV KUBECTL_V {{newVersion}}"
-    },
-    {
-      "customType": "regex",
       "description": "Update Claudio Skills version",
       "managerFilePatterns": [
         "Containerfile"
