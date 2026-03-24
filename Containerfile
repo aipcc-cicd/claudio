@@ -36,7 +36,7 @@ RUN set -eux; \
     git checkout FETCH_HEAD; 
 
 # GCloud
-ENV GCLOUD_V 561.0.0
+ENV GCLOUD_V 562.0.0
 ENV GCLOUD_BASE_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_V}"
 ENV GCLOUD_URL="${GCLOUD_BASE_URL}-linux-x86_64.tar.gz"
 RUN set -eux; \
