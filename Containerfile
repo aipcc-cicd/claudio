@@ -47,7 +47,7 @@ RUN set -eux; \
     tar -xzf gcloud.tar.gz -C /opt; 
 
 # Claudio image    
-FROM registry.access.redhat.com/ubi10/python-312-minimal@sha256:a11203cd61a6d509e54a9fca076a6de4bbe20288012bd156db348bc7ec46bf68
+FROM registry.access.redhat.com/ubi10/python-312-minimal@sha256:3dc047bf30c6dac75b7a74aebcb8944ce35f46cc421543d9ce74716d2a6e611e
 
 ARG TARGETARCH
 USER root
@@ -61,7 +61,7 @@ RUN microdnf install -y skopeo podman unzip gzip git; \
     
 # Claude
 # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
-ENV CLAUDE_V 2.1.85
+ENV CLAUDE_V 2.1.87
 ENV CLAUDE_CODE_USE_VERTEX=1 \
     CLOUD_ML_REGION=us-east5 \
     DISABLE_AUTOUPDATER=1
