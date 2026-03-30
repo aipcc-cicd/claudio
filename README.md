@@ -33,6 +33,7 @@ Available targets:
 - `oci-tag` - Tag existing image with new tag
 - `oci-manifest-build` - Create multi-arch manifest from arch-tagged images
 - `oci-manifest-push` - Push manifest to registry
+- `integrations-update` - Regenerate CI templates with current image version
 
 ## Claudio Skills Reference
 
@@ -141,3 +142,29 @@ claudio
 ```bash
 claudio -p "do something for me Claudio"
 ```
+
+## GitLab CI Integration
+
+Claudio provides a reusable GitLab CI template for running claudio jobs in your pipelines. Include it in your project's `.gitlab-ci.yml`:
+
+```yaml
+include:
+  - project: 'aipcc-cicd/claudio'
+    file: 'integrations/gitlab-ci/claudio.yml'
+
+my-claudio-job:
+  extends: .claudio
+  variables:
+    CLAUDIO_PROMPT: "Analyze the latest MRs and report to Slack"
+```
+
+The `.claudio` template uses the claudio image directly as the job container. You just set `CLAUDIO_PROMPT` and claudio runs with the entrypoint handling gcloud auth and setup.
+
+Available variables:
+- `CLAUDIO_PROMPT` (required) — the prompt to run
+- `CLAUDIO_IMAGE` — override the claudio image (default: current release version)
+- `CLAUDIO_EXTRA_ARGS` — extra arguments passed to claudio
+
+The template is generated from `integrations/gitlab-ci/template/claudio.yml`. When preparing a release, run `make integrations-update` to regenerate the template with the current version, then commit the result.
+
+Downstream projects can extend this template to add their own secret management.

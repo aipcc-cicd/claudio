@@ -1,0 +1,35 @@
+# Reusable GitLab CI template for running claudio jobs.
+#
+# Include this template in your project's .gitlab-ci.yml:
+#
+#   include:
+#     - project: 'aipcc-cicd/claudio'
+#       file: 'integrations/gitlab-ci/claudio.yml'
+#
+# Then define a job that extends .claudio:
+#
+#   my-claudio-job:
+#     extends: .claudio
+#     variables:
+#       CLAUDIO_PROMPT: "Analyze the latest MRs and report to Slack"
+#
+# Optional variables to override:
+#   CLAUDIO_IMAGE       - claudio container image (default: quay.io/aipcc-cicd/claudio:<VERSION>)
+#   CLAUDIO_EXTRA_ARGS  - Extra arguments passed to claudio
+#
+
+.claudio:
+  image:
+    name: ${CLAUDIO_IMAGE}
+    entrypoint: [""]
+  variables:
+    CLAUDIO_IMAGE: "<IMAGE>"
+    CLAUDIO_EXTRA_ARGS: ""
+  script:
+    - |
+      if [ -z "${CLAUDIO_PROMPT}" ]; then
+        echo "ERROR: CLAUDIO_PROMPT variable is not set" >&2
+        exit 1
+      fi
+
+      entrypoint.sh -p "${CLAUDIO_PROMPT}" ${CLAUDIO_EXTRA_ARGS}

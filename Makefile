@@ -72,3 +72,9 @@ oci-tag:
 
 oci-push:
 	${CONTAINER_MANAGER} push $(IMAGE_NAME)
+
+# Integrations
+.PHONY: integrations-update
+
+integrations-update:
+	sed -e 's%<IMAGE>%$(IMAGE_NAME)%g' integrations/gitlab-ci/template/claudio.yml > integrations/gitlab-ci/claudio.yml
