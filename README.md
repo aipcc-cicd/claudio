@@ -143,6 +143,20 @@ claudio
 claudio -p "do something for me Claudio"
 ```
 
+## Git Integration
+
+Git identity, commit signing, and remote authentication can be configured via environment variables. This is useful in CI pipelines and containerized environments where mounting `.gitconfig` is not practical.
+
+| Variable | Description |
+|---|---|
+| `GIT_USER_NAME` | Sets `git config --global user.name` |
+| `GIT_USER_EMAIL` | Sets `git config --global user.email` |
+| `GIT_SSH_SIGNING_KEY` | Path to an SSH key for commit signing. Enables `gpg.format ssh` and `commit.gpgsign true` |
+| `GITLAB_TOKEN` | GitLab personal access token, used by `glab` for API operations |
+| `GITLAB_HOST` | GitLab instance URL, used by `glab` (defaults to `gitlab.com`) |
+
+These are optional — if unset, git uses whatever config is already present (e.g. a mounted `.gitconfig`). This handles a single git identity. For multi-instance setups, configure per-host credentials in the configuration file (`~/.config/glab-cli/config.yml`).
+
 ## GitLab CI Integration
 
 Claudio provides a reusable GitLab CI template for running claudio jobs in your pipelines. Include it in your project's `.gitlab-ci.yml`:
