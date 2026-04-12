@@ -61,7 +61,7 @@ RUN microdnf install -y skopeo podman unzip gzip git; \
     
 # Claude
 # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
-ENV CLAUDE_V 2.1.98
+ENV CLAUDE_V 2.1.104
 ENV CLAUDE_CODE_USE_VERTEX=1 \
     CLOUD_ML_REGION=us-east5 \
     DISABLE_AUTOUPDATER=1
