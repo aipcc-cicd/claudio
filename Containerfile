@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 # SPDX-License-Identifier: Apache-2.0
-FROM registry.access.redhat.com/ubi10@sha256:1b616c4a90d6444b394d5c8f4bd9e15a394d95dd628925d0ec80c257fdc5099c as preparer
+FROM registry.access.redhat.com/ubi10@sha256:738a053c6648573f9d58341312e5574716382420a9c40ed4e3175d148ba257d2 as preparer
 ARG TARGETARCH
 
 RUN dnf install -y git 
