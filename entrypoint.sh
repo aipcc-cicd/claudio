@@ -48,6 +48,7 @@ fi
 
 # Configure git commit signing
 if [ -n "${GIT_SSH_SIGNING_KEY:-}" ]; then
+  chmod 600 "$GIT_SSH_SIGNING_KEY"
   git config --global gpg.format ssh
   git config --global user.signingkey "$GIT_SSH_SIGNING_KEY"
   git config --global commit.gpgsign true
