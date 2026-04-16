@@ -14,14 +14,14 @@
 # limitations under the License.
 #
 # SPDX-License-Identifier: Apache-2.0
-FROM registry.access.redhat.com/ubi10@sha256:738a053c6648573f9d58341312e5574716382420a9c40ed4e3175d148ba257d2 as preparer
+FROM registry.access.redhat.com/ubi10@sha256:bce838c4ddd37b36b8f10a372efbd8a6c7de5b86cb50d639535d8f50e41372f0 as preparer
 ARG TARGETARCH
 
 RUN dnf install -y git 
 
 
 # GCloud
-ENV GCLOUD_V 564.0.0
+ENV GCLOUD_V 565.0.0
 ENV GCLOUD_BASE_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_V}"
 ENV GCLOUD_URL="${GCLOUD_BASE_URL}-linux-x86_64.tar.gz"
 RUN set -eux; \
@@ -50,7 +50,7 @@ RUN set -eux; \
     git checkout FETCH_HEAD;
 
 # Claudio image    
-FROM registry.access.redhat.com/ubi10/python-312-minimal@sha256:3de23fb7f53a67937845591d68066d5f075a18826a6291dad2dd700cb1d4290a
+FROM registry.access.redhat.com/ubi10/python-312-minimal@sha256:40fd593fb7b2078b73821b869733c880d8dec9bfe5abc45a0d88784a0c79b0ec
 
 ARG TARGETARCH
 USER root
@@ -64,7 +64,7 @@ RUN microdnf install -y skopeo podman unzip gzip git; \
     
 # Claude
 # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
-ENV CLAUDE_V 2.1.104
+ENV CLAUDE_V 2.1.112
 ENV CLAUDE_CODE_USE_VERTEX=1 \
     CLOUD_ML_REGION=us-east5 \
     DISABLE_AUTOUPDATER=1
