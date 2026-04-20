@@ -67,6 +67,7 @@ RUN microdnf install -y skopeo podman unzip gzip git; \
 ENV CLAUDE_V 2.1.114
 ENV CLAUDE_CODE_USE_VERTEX=1 \
     CLOUD_ML_REGION=us-east5 \
+    ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5@20251001 \
     DISABLE_AUTOUPDATER=1
 ENV CLAUDE_BASE_URL="https://github.com/anthropics/claude-code/releases/download/v${CLAUDE_V}/claude-code-v${CLAUDE_V}"
 RUN curl -fsSL https://claude.ai/install.sh | bash -s ${CLAUDE_V} && \
