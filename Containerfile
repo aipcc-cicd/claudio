@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 # SPDX-License-Identifier: Apache-2.0
-FROM registry.access.redhat.com/ubi10@sha256:bce838c4ddd37b36b8f10a372efbd8a6c7de5b86cb50d639535d8f50e41372f0 as preparer
+FROM registry.access.redhat.com/ubi10@sha256:a2ad0aa42a07c5fd4d9fd440b4c968e2c696d4b40c2018a44eedd8c156fd4143 as preparer
 ARG TARGETARCH
 
 RUN dnf install -y git 
@@ -50,7 +50,7 @@ RUN set -eux; \
     git checkout FETCH_HEAD;
 
 # Claudio image    
-FROM registry.access.redhat.com/ubi10/python-312-minimal@sha256:40fd593fb7b2078b73821b869733c880d8dec9bfe5abc45a0d88784a0c79b0ec
+FROM registry.access.redhat.com/ubi10/python-312-minimal@sha256:df10cfea920731d904d38bbe1b720d866286611a849f590c9281083b860764ec
 
 ARG TARGETARCH
 USER root
@@ -64,7 +64,7 @@ RUN microdnf install -y skopeo podman unzip gzip git; \
     
 # Claude
 # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
-ENV CLAUDE_V 2.1.114
+ENV CLAUDE_V 2.1.116
 ENV CLAUDE_CODE_USE_VERTEX=1 \
     CLOUD_ML_REGION=us-east5 \
     ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5@20251001 \
