@@ -66,5 +66,49 @@ for c in ~/.claude/context.d/*.md; do
   [ -f "$c" ] && echo "@$c" >>"$CLAUDE_MD"
 done
 
-# Run claude
-exec claude "$@"
+# --- Non-streaming mode: transparent passthrough ---
+if [ "${CLAUDIO_STREAM:-}" != "1" ]; then
+  exec claude "$@"
+fi
+
+# --- CI streaming mode ---
+stream_args=()
+[ -n "${CLAUDIO_LOG_FILE:-}" ] && stream_args+=(--log-file "$CLAUDIO_LOG_FILE")
+[ -n "${CLAUDIO_WRAP:-}" ]     && stream_args+=(--wrap "$CLAUDIO_WRAP")
+[ "${NO_COLOR:-}" = "1" ]        && stream_args+=(--no-color)
+
+FIFO_DIR=$(mktemp -d)
+FIFO="$FIFO_DIR/stream.fifo"
+mkfifo "$FIFO"
+
+claude \
+    --output-format stream-json \
+    --include-partial-messages \
+    --include-hook-events \
+    --verbose \
+    "$@" > "$FIFO" &
+claude_pid=$!
+
+python3 -u /usr/local/bin/stream-claude.py "${stream_args[@]}" < "$FIFO" &
+stream_pid=$!
+
+_on_signal() {
+  kill "$claude_pid" "$stream_pid" 2>/dev/null || true
+}
+
+cleanup() {
+  rm -rf "$FIFO_DIR"
+}
+
+trap '_on_signal; cleanup' TERM INT EXIT
+
+wait "$stream_pid" 2>/dev/null && stream_rc=0 || stream_rc=$?
+
+# If stream dies, stop claude to avoid blocking on FIFO
+kill "$claude_pid" 2>/dev/null || true
+wait "$claude_pid" 2>/dev/null && claude_rc=0 || claude_rc=$?
+
+# 143 = SIGTERM (expected when we kill claude after stream ends)
+if [ "$stream_rc" -ne 0 ]; then exit "$stream_rc"; fi
+if [ "$claude_rc" -eq 0 ] || [ "$claude_rc" -eq 143 ]; then exit 0; fi
+exit "$claude_rc"
