@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 # SPDX-License-Identifier: Apache-2.0
-FROM registry.access.redhat.com/ubi10@sha256:a2ad0aa42a07c5fd4d9fd440b4c968e2c696d4b40c2018a44eedd8c156fd4143 as preparer
+FROM registry.access.redhat.com/ubi10@sha256:37d90a02d14afed06b6fff1ed0a33cd07b96187e90ed46d8871fdce550538b43 as preparer
 ARG TARGETARCH
 
 RUN dnf install -y git 
@@ -64,7 +64,7 @@ RUN microdnf install -y skopeo podman unzip gzip git; \
     
 # Claude
 # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
-ENV CLAUDE_V 2.1.116
+ENV CLAUDE_V 2.1.117
 ENV CLAUDE_CODE_USE_VERTEX=1 \
     CLOUD_ML_REGION=us-east5 \
     ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5@20251001 \
