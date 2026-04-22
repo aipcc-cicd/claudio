@@ -178,6 +178,23 @@ Available variables:
 - `CLAUDIO_PROMPT` (required) — the prompt to run
 - `CLAUDIO_IMAGE` — override the claudio image (default: current release version)
 - `CLAUDIO_EXTRA_ARGS` — extra arguments passed to claudio
+- `CLAUDIO_STREAM` — set to `1` to enable human-readable streaming output in the job log
+- `CLAUDIO_LOG_FILE` — write a plain-text log (no ANSI codes) to this path (streaming mode only)
+- `CLAUDIO_WRAP` — word-wrap output at N columns, `0` to disable (streaming mode only)
+- `NO_COLOR` — set to `1` to disable ANSI color codes in streaming output
+
+### Streaming mode
+
+When `CLAUDIO_STREAM=1`, the entrypoint automatically pipes Claude's output through a stream parser that renders tool calls, thinking, token stats, and errors as readable log lines. The raw `--output-format stream-json` flags are added automatically — you don't need to include them in `CLAUDIO_EXTRA_ARGS`.
+
+```yaml
+my-claudio-job:
+  extends: .claudio
+  variables:
+    CLAUDIO_STREAM: "1"
+    CLAUDIO_LOG_FILE: "claudio-stream.log"
+    CLAUDIO_PROMPT: "Do something useful"
+```
 
 The template is generated from `integrations/gitlab-ci/template/claudio.yml`. When preparing a release, run `make integrations-update` to regenerate the template with the current version, then commit the result.
 
