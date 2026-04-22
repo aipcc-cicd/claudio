@@ -23,7 +23,7 @@
     name: ${CLAUDIO_IMAGE}
     entrypoint: [""]
   variables:
-    CLAUDIO_IMAGE: "quay.io/aipcc-cicd/claudio:v0.5.0-dev"
+    CLAUDIO_IMAGE: "quay.io/aipcc-cicd/claudio:v0.5.3"
     CLAUDIO_EXTRA_ARGS: ""
   script:
     - |
