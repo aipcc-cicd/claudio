@@ -50,7 +50,7 @@ RUN set -eux; \
     git checkout FETCH_HEAD;
 
 # Claudio image    
-FROM registry.access.redhat.com/ubi10/python-312-minimal@sha256:7350725154e3419463f815c5faae915de4dbf191cd4c3183dbc080ac6d1d5e0c
+FROM registry.access.redhat.com/ubi10/python-312-minimal@sha256:1124c0e91dbae9b8893a218e34e7437b03865da333015078fd6bb84e2daf3665
 
 ARG TARGETARCH
 USER root
@@ -64,7 +64,7 @@ RUN microdnf install -y skopeo podman unzip gzip git; \
     
 # Claude
 # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
-ENV CLAUDE_V 2.1.118
+ENV CLAUDE_V 2.1.121
 ENV CLAUDE_CODE_USE_VERTEX=1 \
     CLOUD_ML_REGION=global \
     ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5@20251001 \
