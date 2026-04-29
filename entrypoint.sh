@@ -54,6 +54,12 @@ if [ -n "${GIT_SSH_SIGNING_KEY:-}" ]; then
   git config --global commit.gpgsign true
 fi
 
+# Configure HTTPS push credentials for gitlab.com
+if [ -n "${GITLAB_TOKEN:-}" ]; then
+  git config --global credential."https://gitlab.com".helper \
+    '!f() { echo "username=oauth2"; echo "password=${GITLAB_TOKEN}"; }; f'
+fi
+
 # Change to workdir if it exists (for mounted volumes)
 if [ -d "$HOME/workdir" ]; then
   cd "$HOME/workdir"
