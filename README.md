@@ -199,3 +199,23 @@ my-claudio-job:
 The template is generated from `integrations/gitlab-ci/template/claudio.yml`. When preparing a release, run `make integrations-update` to regenerate the template with the current version, then commit the result.
 
 Downstream projects can extend this template to add their own secret management.
+
+# Releasing
+
+1. Bump `VERSION` in the `Makefile` to the new version (e.g. `0.6.1`).
+2. Run `make integrations-update` to regenerate `integrations/gitlab-ci/claudio.yml` with the new image reference (used by downstream CI templates).
+3. Open a PR with a `chore(cut): vX.Y.Z` commit that includes a short description of what the release contains.
+4. Once merged, tag the merge commit and push the tag:
+
+```bash
+git checkout main && git pull
+git tag vX.Y.Z
+git push origin vX.Y.Z
+```
+
+The CI will then:
+- Build the image for `amd64` and `arm64`
+- Push the multi-arch manifest to `quay.io/aipcc-cicd/claudio:vX.Y.Z`
+- Create a GitHub release automatically with generated release notes
+
+Patch releases (e.g. CVE fixes) follow the same process — there is no shortcut.
