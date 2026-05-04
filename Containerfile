@@ -99,6 +99,10 @@ RUN set -eux; \
         "${HOME}/claudio-skills" \
         "${HOME}/.claude/plugins"
 
+# pyopenssl is pulled in transitively by the UBI10 base image and is not a direct
+# dependency. CVE-2026-27459 (CRITICAL) affects <26.0.0; pin the fixed version.
+RUN pip install --no-cache-dir "pyopenssl>=26.0.0"
+
 # Claudio
 RUN chown -R claudio:0 ${HOME}; \
     chmod -R ug+rwx ${HOME}
