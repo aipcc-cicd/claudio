@@ -29,15 +29,14 @@ ARTIFACT_NAME ?= claudio
 
 # Claudio skills
 #
-# CS_REF_TYPE can be tag, branch or pr
+# CS_REF_TYPE can be tag or pr
 # Example when we create a tag version for claudio
 CS_REF_TYPE  ?= tag
-CS_REF ?= v0.5.3
-# Example when we create a tag version for claudio
-# CS_REF_TYPE  ?= tag
-# CS_REF ?= v0.1.0
+CS_REF  ?= 0.5.3
 CS_REPO ?= https://github.com/aipcc-cicd/claudio-skills.git
-
+# For CS PR 41
+# CS_REF_TYPE = pr
+# CS_REF = 41
 # Resolve the remote HEAD SHA for the skills ref so the build cache
 # invalidates automatically when the PR/branch gets new commits.
 CS_CACHE_KEY_CMD = $(if $(filter pr,$(CS_REF_TYPE)), \

@@ -39,27 +39,22 @@ ARG CS_REF
 ARG CS_CACHE_KEY
 ENV CS_REPO https://github.com/aipcc-cicd/claudio-skills.git
 RUN set -eux; \
-    git init claudio-skills; \
-    cd claudio-skills; \
-    git remote add origin "${CS_REPO}"; \
-    if [ "${CS_REF_TYPE}" = "pr" ]; then \
-        git fetch --depth 1 origin "pull/${CS_REF}/head"; \
-    else \
-        git fetch --depth 1 origin "${CS_REF}"; \
+    if [ "${CS_REF_TYPE}" = "pr" ]; then \ 
+        git clone "${CS_REPO}"; \
+        git -C claudio-skills fetch --depth 1 origin "pull/${CS_REF}/head"; \
+        git -C claudio-skills checkout FETCH_HEAD; \
     fi; \
-    git checkout FETCH_HEAD;
+    mkdir -p claudio-skills;
 
 # Claudio image    
 FROM registry.access.redhat.com/ubi10/python-312-minimal@sha256:1124c0e91dbae9b8893a218e34e7437b03865da333015078fd6bb84e2daf3665
 
 ARG TARGETARCH
 USER root
-
-
 ENV HOME /home/claudio
 
 # Base for claudio image
-RUN microdnf install -y skopeo podman unzip gzip git; \
+RUN microdnf install -y skopeo podman unzip gzip git jq; \
     useradd claudio 
     
 # Claude
@@ -81,23 +76,19 @@ RUN set -eux; \
 
 # Conf
 COPY conf/ ${HOME}/
-COPY scripts/ /usr/local/bin/
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY scripts/ entrypoint.sh /usr/local/bin/
 
-# Skills
+# Claudio Skills
 COPY --from=preparer /claudio-skills /home/claudio/claudio-skills
-RUN set -eux; \
-    for script in "${HOME}/claudio-skills"/claudio-plugin/tools/*/install.sh; do \
-        [ -f "$script" ] && bash "$script"; \
-    done; \
-    \
-    for req in "${HOME}/claudio-skills"/claudio-plugin/tools/python/*-requirements.txt; do \
-        [ -f "$req" ] && pip install --no-cache-dir -r "$req"; \
-    done; \
-    \
-    /usr/local/bin/generate-plugin-configs.sh \
-        "${HOME}/claudio-skills" \
-        "${HOME}/.claude/plugins"
+ARG CS_REF_TYPE
+ARG CS_REF
+RUN if [ "${CS_REF_TYPE}" != "pr" ]; then \
+        claude plugin marketplace add aipcc-cicd/claudio-skills@v${CS_REF}; \
+    else \
+         claude plugin marketplace add /home/claudio/claudio-skills; \
+    fi; \
+    claude plugin install --scope user claudio-plugin; \
+    pt-manager.sh
 
 # pyopenssl is pulled in transitively by the UBI10 base image and is not a direct
 # dependency. CVE-2026-27459 (CRITICAL) affects <26.0.0; pin the fixed version.
