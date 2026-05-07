@@ -15,7 +15,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-VERSION ?= 0.6.1
+VERSION ?= 0.6.2
 CONTAINER_MANAGER ?= podman
 
 # Image configuration
@@ -32,7 +32,7 @@ ARTIFACT_NAME ?= claudio
 # CS_REF_TYPE can be tag or pr
 # Example when we create a tag version for claudio
 CS_REF_TYPE  ?= tag
-CS_REF  ?= 0.5.3
+CS_REF  ?= 0.5.4
 CS_REPO ?= https://github.com/aipcc-cicd/claudio-skills.git
 # For CS PR 41
 # CS_REF_TYPE = pr
