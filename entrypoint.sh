@@ -9,6 +9,25 @@ if [ "$DEBUG" = "true" ]; then
 fi
 
 ADC_PATH="${GOOGLE_APPLICATION_CREDENTIALS:-${HOME}/.config/gcloud/application_default_credentials.json}"
+CLAUDIO_RESULT_FILE="${CLAUDIO_RESULT_FILE:-}"
+CLAUDIO_EVALUATION_PROMPT="${CLAUDIO_EVALUATION_PROMPT:-$(cat <<'EOF'
+Read this Claude Code session log.
+
+Determine whether the original task was FULLY completed successfully.
+
+Return ONLY one of:
+- SUCCESS
+- FAILURE: <short reason>
+
+Mark the task as FAILURE if:
+- the agent abandoned the task
+- commands or tool calls failed without recovery
+- tests failed
+- the requested work was only partially completed
+- the final state is uncertain
+- the task could not be verified as complete
+EOF
+)}"
 
 ###################
 #### Functions ####
@@ -23,6 +42,46 @@ check_adc() {
     return 0
   fi
   return 1
+}
+
+validate_result() {
+  echo "=== Validating Claudio result ==="
+
+  if [ ! -f "${CLAUDIO_RESULT_FILE}" ]; then
+    echo "ERROR: Claudio did not produce a result file"
+    echo "ERROR: Task status is unknown"
+    return 1
+  fi
+
+  local result
+  result="$(head -n1 "${CLAUDIO_RESULT_FILE}" | tr -d '\r')"
+
+  echo "Result: ${result}"
+
+  case "${result}" in
+    SUCCESS)
+      echo "=== Claudio task completed successfully ==="
+      return 0
+      ;;
+
+    FAILURE:*)
+      echo "=== Claudio task reported failure ==="
+      echo "${result}"
+      return 1
+      ;;
+
+    *)
+      echo "ERROR: Invalid result format"
+      echo "Expected:"
+      echo "  SUCCESS"
+      echo "or:"
+      echo "  FAILURE: <reason>"
+      echo
+      echo "Received:"
+      echo "  ${result}"
+      return 1
+      ;;
+  esac
 }
 
 ##############
@@ -68,10 +127,19 @@ done
 
 # --- Non-streaming mode: transparent passthrough ---
 if [ "${CLAUDIO_STREAM:-}" != "1" ]; then
+  if [ -n "${CLAUDIO_RESULT_FILE}" ]; then
+    echo "ERROR: CLAUDIO_RESULT_FILE requires streaming mode (CLAUDIO_STREAM=1) to evaluate results"
+    exit 1
+  fi
   exec claude "$@"
 fi
 
 # --- CI streaming mode ---
+if [ -n "${CLAUDIO_RESULT_FILE}" ] && [ -z "${CLAUDIO_LOG_FILE:-}" ]; then
+  CLAUDIO_LOG_FILE="$(mktemp /tmp/claudio-session.XXXXXX.log)"
+  echo "CLAUDIO_LOG_FILE not set; defaulting to ${CLAUDIO_LOG_FILE} for result evaluation"
+fi
+
 stream_args=()
 [ -n "${CLAUDIO_LOG_FILE:-}" ] && stream_args+=(--log-file "$CLAUDIO_LOG_FILE")
 [ -n "${CLAUDIO_WRAP:-}" ]     && stream_args+=(--wrap "$CLAUDIO_WRAP")
@@ -110,5 +178,25 @@ wait "$claude_pid" 2>/dev/null && claude_rc=0 || claude_rc=$?
 
 # 143 = SIGTERM (expected when we kill claude after stream ends)
 if [ "$stream_rc" -ne 0 ]; then exit "$stream_rc"; fi
-if [ "$claude_rc" -eq 0 ] || [ "$claude_rc" -eq 143 ]; then exit 0; fi
-exit "$claude_rc"
+if [ "$claude_rc" -ne 0 ] && [ "$claude_rc" -ne 143 ]; then exit "$claude_rc"; fi
+
+# Result check: use a second Claude call to evaluate whether the task
+# actually completed successfully based on the session log.
+if [ -n "${CLAUDIO_RESULT_FILE}" ] && [ -s "${CLAUDIO_LOG_FILE:-}" ]; then
+  echo "=== Evaluating task result ==="
+
+  if ! tail -c "${CLAUDIO_RESULT_MAX_CHARS:-50000}" "${CLAUDIO_LOG_FILE}" | \
+    claude -p "${CLAUDIO_EVALUATION_PROMPT}" \
+      --model "${CLAUDIO_EVALUATION_MODEL:-claude-haiku-4-5-20251001}" \
+      --no-session-persistence \
+      > "${CLAUDIO_RESULT_FILE}"
+  then
+    echo "ERROR: Failed to evaluate task result"
+    exit 1
+  fi
+
+  validate_result
+  exit $?
+fi
+
+exit 0
