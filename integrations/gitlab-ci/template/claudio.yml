@@ -32,4 +32,5 @@
         exit 1
       fi
 
+      printf "=== PROMPT ===\n%s\n" "${CLAUDIO_PROMPT}"
       entrypoint.sh -p "${CLAUDIO_PROMPT}" ${CLAUDIO_EXTRA_ARGS}
