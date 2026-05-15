@@ -109,7 +109,7 @@ podman run -it --rm --userns=keep-id \
   -e ANTHROPIC_VERTEX_PROJECT_QUOTA="${ANTHROPIC_VERTEX_PROJECT_QUOTA}" \
   -e SLACK_XOXC_TOKEN="${SLACK_XOXC_TOKEN}" \
   -e SLACK_XOXD_TOKEN="${SLACK_XOXD_TOKEN}" \
-  quay.io/aipcc-cicd/claudio:v0.4.1 --allowedTools "Write(*)" "Glob(*)" "Read(*)" "$@"
+  quay.io/aipcc-cicd/claudio:v0.6.3 --allowedTools "Write(*)" "Glob(*)" "Read(*)" "$@"
 ```
 
 The gcloud mount shares your host's Google Cloud credentials with the container. This is required because claudio uses Google Vertex AI as its default Claude API provider — `ANTHROPIC_VERTEX_PROJECT_ID` and `ANTHROPIC_VERTEX_PROJECT_QUOTA` identify the GCP project, while the gcloud credentials handle authentication. Make sure you're logged in on the host first (`gcloud auth application-default login`).
