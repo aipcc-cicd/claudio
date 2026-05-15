@@ -18,11 +18,11 @@ podman run -it --rm --userns=keep-id \
   -v ${HOME}/.docker/config.json:/home/claudio/.docker/config.json:ro \
   -v ${HOME}/.gitconfig:/home/claudio/.gitconfig:ro \
   -v ${HOME}/.ssh:/home/claudio/.ssh:ro \
-  -v ${SSH_AUTH_SOCK}:/tmp/ssh-agent.sock \
-  -e SSH_AUTH_SOCK=/tmp/ssh-agent.sock \
-  -e GITLAB_TOKEN="${GITLAB_TOKEN}" \
-  -e ANTHROPIC_VERTEX_PROJECT_ID="${ANTHROPIC_VERTEX_PROJECT_ID}" \
-  -e ANTHROPIC_VERTEX_PROJECT_QUOTA="${ANTHROPIC_VERTEX_PROJECT_QUOTA}" \
-  -e SLACK_XOXC_TOKEN="${SLACK_XOXC_TOKEN}" \
-  -e SLACK_XOXD_TOKEN="${SLACK_XOXD_TOKEN}" \
+  ${SSH_AUTH_SOCK:+-v "${SSH_AUTH_SOCK}:/tmp/ssh-agent.sock"} \
+  ${SSH_AUTH_SOCK:+-e SSH_AUTH_SOCK=/tmp/ssh-agent.sock} \
+  ${GITLAB_TOKEN:+-e GITLAB_TOKEN="${GITLAB_TOKEN}"} \
+  ${ANTHROPIC_VERTEX_PROJECT_ID:+-e ANTHROPIC_VERTEX_PROJECT_ID="${ANTHROPIC_VERTEX_PROJECT_ID}"} \
+  ${ANTHROPIC_VERTEX_PROJECT_QUOTA:+-e ANTHROPIC_VERTEX_PROJECT_QUOTA="${ANTHROPIC_VERTEX_PROJECT_QUOTA}"} \
+  ${SLACK_XOXC_TOKEN:+-e SLACK_XOXC_TOKEN="${SLACK_XOXC_TOKEN}"} \
+  ${SLACK_XOXD_TOKEN:+-e SLACK_XOXD_TOKEN="${SLACK_XOXD_TOKEN}"} \
   quay.io/aipcc-cicd/claudio:v0.6.3 --allowedTools "Write(*)" "Glob(*)" "Read(*)" "$@"
