@@ -82,34 +82,11 @@ The recommended way to run claudio locally is through a wrapper script. It handl
 
 ## Wrapper Script Setup
 
-Create `~/.local/bin/claudio` with the following content and make it executable (`chmod +x`):
+Copy or symlink [`cli/claudio`](cli/claudio) to `~/.local/bin/claudio`:
 
 ```bash
-#!/bin/bash
-
-# Load environment variables from ~/.config/claudio/.env if it exists
-ENV_FILE="${HOME}/.config/claudio/.env"
-if [ -f "$ENV_FILE" ]; then
-  set -a
-  source "$ENV_FILE"
-  set +a
-fi
-
-podman run -it --rm --userns=keep-id \
-  -v ${HOME}/.kube/claudio-reader.kubeconfig:/home/claudio/.kube/config:ro \
-  -v ${HOME}/.config/gcloud:/home/claudio/.config/gcloud \
-  -v ${PWD}:/home/claudio/workdir \
-  -v ${HOME}/.docker/config.json:/home/claudio/.docker/config.json:ro \
-  -v ${HOME}/.gitconfig:/home/claudio/.gitconfig:ro \
-  -v ${HOME}/.ssh:/home/claudio/.ssh:ro \
-  -v ${SSH_AUTH_SOCK}:/tmp/ssh-agent.sock \
-  -e SSH_AUTH_SOCK=/tmp/ssh-agent.sock \
-  -e GITLAB_TOKEN="${GITLAB_TOKEN}" \
-  -e ANTHROPIC_VERTEX_PROJECT_ID="${ANTHROPIC_VERTEX_PROJECT_ID}" \
-  -e ANTHROPIC_VERTEX_PROJECT_QUOTA="${ANTHROPIC_VERTEX_PROJECT_QUOTA}" \
-  -e SLACK_XOXC_TOKEN="${SLACK_XOXC_TOKEN}" \
-  -e SLACK_XOXD_TOKEN="${SLACK_XOXD_TOKEN}" \
-  quay.io/aipcc-cicd/claudio:v0.6.3 --allowedTools "Write(*)" "Glob(*)" "Read(*)" "$@"
+cp cli/claudio ~/.local/bin/claudio
+chmod +x ~/.local/bin/claudio
 ```
 
 The gcloud mount shares your host's Google Cloud credentials with the container. This is required because claudio uses Google Vertex AI as its default Claude API provider — `ANTHROPIC_VERTEX_PROJECT_ID` and `ANTHROPIC_VERTEX_PROJECT_QUOTA` identify the GCP project, while the gcloud credentials handle authentication. Make sure you're logged in on the host first (`gcloud auth application-default login`).
