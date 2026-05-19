@@ -2,6 +2,10 @@
   "model": "claude-sonnet-4-6",
   "permissions": {
     "allow": [
+      "mcp__plugin_mempalace_mempalace__mempalace_status",
+      "mcp__plugin_mempalace_mempalace__mempalace_diary_read",
+      "mcp__plugin_mempalace_mempalace__mempalace_search",
+      "mcp__plugin_mempalace_mempalace__mempalace_add_drawer"
     ],
     "deny": [],
     "ask": []

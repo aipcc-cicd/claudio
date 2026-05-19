@@ -44,6 +44,19 @@
       "depNameTemplate": "aipcc-cicd/claudio-skills",
       "extractVersionTemplate": "^v?(?<version>\\d+\\.\\d+\\.\\d+)$",
       "autoReplaceStringTemplate": "ENV CLAUDIO_SKILLS_V v{{newVersion}}"
+    },
+    {
+      "customType": "regex",
+      "description": "Update MemPalace version",
+      "managerFilePatterns": [
+        "Containerfile"
+      ],
+      "matchStrings": [
+        "ENV\\s+MEMPALACE_V\\s+(?<currentValue>\\d+\\.\\d+\\.\\d+)"
+      ],
+      "datasourceTemplate": "pypi",
+      "depNameTemplate": "mempalace",
+      "autoReplaceStringTemplate": "ENV MEMPALACE_V {{newValue}}"
     }
   ],
   "packageRules": []

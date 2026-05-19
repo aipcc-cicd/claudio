@@ -114,6 +114,67 @@ cd ~/my-project
 claudio
 ```
 
+## Memory
+
+Claudio bundles [MemPalace](https://github.com/MemPalace/mempalace) for persistent memory across sessions. Memory is **opt-in** — it is disabled by default and only activates when `MEMPAL_ENABLED` is set.
+
+The palace is stored at a **fixed path inside the container**: `/home/claudio/.mempalace/palace`. Mount a persistent volume there to retain memory across runs.
+
+Two Claude Code hooks activate automatically:
+
+| Hook | Event | Purpose |
+|---|---|---|
+| `mempal_precompact_hook.sh` | `PreCompact` | Saves context before conversation compaction |
+| `mempal_save_hook.sh` | `Stop` | Auto-saves memory every N exchanges on shutdown |
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `MEMPAL_SAVE_INTERVAL` | `5` | Number of conversation exchanges between automatic memory saves. Lower values save more frequently; higher values reduce overhead. |
+
+### Enabling memory locally
+
+Mount a host directory at the palace path and set `MEMPAL_ENABLED`:
+
+```bash
+podman run -it --rm --userns=keep-id \
+  -v ${HOME}/.config/gcloud:/home/claudio/.config/gcloud \
+  -v ${PWD}:/home/claudio/workdir \
+  -v ${HOME}/.local/share/claudio-memory:/home/claudio/.mempalace/palace \
+  -e ANTHROPIC_VERTEX_PROJECT_ID="${ANTHROPIC_VERTEX_PROJECT_ID}" \
+  -e ANTHROPIC_VERTEX_PROJECT_QUOTA="${ANTHROPIC_VERTEX_PROJECT_QUOTA}" \
+  -e MEMPAL_ENABLED=true \
+  -e MEMPAL_SAVE_INTERVAL=5 \
+  quay.io/aipcc-cicd/claudio:v0.6.0
+```
+
+Add it to your wrapper script and `.env` file to make it permanent:
+
+```bash
+# in ~/.config/claudio/.env
+MEMPAL_SAVE_INTERVAL=5
+```
+
+```bash
+# in the wrapper script, add the volume mount and env vars
+  -v ${HOME}/.local/share/claudio-memory:/home/claudio/.mempalace/palace \
+  -e MEMPAL_ENABLED="${MEMPAL_ENABLED:-false}" \
+  -e MEMPAL_SAVE_INTERVAL="${MEMPAL_SAVE_INTERVAL:-5}" \
+```
+
+### Enabling memory in GitLab CI
+
+Mount a persistent volume at the palace path and pass `MEMPAL_ENABLED`:
+
+```yaml
+my-claudio-job:
+  extends: .claudio
+  variables:
+    CLAUDIO_PROMPT: "Analyze the latest MRs and report to Slack"
+    MEMPAL_ENABLED: "true"
+  volumes:
+    - claudio-memory:/home/claudio/.mempalace/palace
+```
+
 ## One-time Prompt
 
 ```bash

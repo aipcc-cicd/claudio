@@ -54,7 +54,10 @@ USER root
 ENV HOME /home/claudio
 
 # Base for claudio image
-RUN microdnf install -y skopeo podman unzip gzip git jq; \
+# pyopenssl is pulled in transitively by the UBI10 base image and is not a direct
+# dependency. CVE-2026-27459 (CRITICAL) affects <26.0.0; pin the fixed version.
+RUN microdnf install -y skopeo podman unzip gzip git jq && microdnf clean all; \
+    pip install --no-cache-dir "pyopenssl>=26.0.0"; \
     useradd claudio 
     
 # Claude
@@ -90,9 +93,16 @@ RUN if [ "${CS_REF_TYPE}" != "pr" ]; then \
     claude plugin install --scope user claudio-plugin; \
     pt-manager.sh
 
-# pyopenssl is pulled in transitively by the UBI10 base image and is not a direct
-# dependency. CVE-2026-27459 (CRITICAL) affects <26.0.0; pin the fixed version.
-RUN pip install --no-cache-dir "pyopenssl>=26.0.0"
+
+# MemPalace
+ENV MEMPALACE_V 3.3.4
+ENV MEMPAL_SAVE_INTERVAL 5
+RUN pip install --no-cache-dir MemPalace==${MEMPALACE_V}; \
+    claude plugin marketplace add MemPalace/mempalace@v${MEMPALACE_V};\
+    claude plugin install --scope user mempalace; \
+    grep -q '^SAVE_INTERVAL=[0-9]' ${HOME}/.claude/plugins/marketplaces/mempalace/hooks/mempal_save_hook.sh || \
+        { echo 'ERROR: SAVE_INTERVAL pattern not found in hook script'; exit 1; }; \         
+    sed -i 's/^SAVE_INTERVAL=[0-9]\+/SAVE_INTERVAL="${MEMPAL_SAVE_INTERVAL:-15}"/' ${HOME}/.claude/plugins/marketplaces/mempalace/hooks/mempal_save_hook.sh;
 
 # Claudio
 RUN chown -R claudio:0 ${HOME}; \

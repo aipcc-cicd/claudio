@@ -15,7 +15,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-VERSION ?= 0.6.1
+VERSION ?= 0.6.1-dev
 CONTAINER_MANAGER ?= podman
 
 # Image configuration
