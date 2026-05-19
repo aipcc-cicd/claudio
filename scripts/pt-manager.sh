@@ -26,6 +26,19 @@ if [ ${#new_perms[@]} -gt 0 ]; then
     mv "$tmp" "$settings"
 fi
 
+# Register PreToolUse hook to auto-allow commands that invoke plugin scripts.
+# Workaround for broken permission matching in Claude Code:
+# https://github.com/anthropics/claude-code/issues/14956
+# https://github.com/anthropics/claude-code/issues/30519
+echo "Registering PreToolUse hook for plugin script permissions..." >&2
+hook_script="${HOME}/.claude/hooks/smart-permissions.sh"
+if [ -f "$hook_script" ]; then
+    tmp=$(mktemp)
+    jq --arg cmd "bash ${hook_script}" '.hooks.PreToolUse = ((.hooks.PreToolUse // []) + [{"matcher": "Bash", "hooks": [{"type": "command", "command": $cmd}]}])' \
+        "$settings" > "$tmp"
+    mv "$tmp" "$settings"
+fi
+
 echo "Running installation scripts for installed plugins..." >&2
 while IFS= read -r location; do
     while IFS= read -r script; do
