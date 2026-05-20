@@ -35,15 +35,15 @@
       "customType": "regex",
       "description": "Update Claudio Skills version",
       "managerFilePatterns": [
-        "Containerfile"
+        "Makefile"
       ],
       "matchStrings": [
-        "ENV\\s+CLAUDIO_SKILLS_V\\s+v(?<currentValue>\\d+\\.\\d+\\.\\d+)"
+        "CS_REF\\s+\\?=\\s+(?<currentValue>\\d+\\.\\d+\\.\\d+)"
       ],
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "aipcc-cicd/claudio-skills",
       "extractVersionTemplate": "^v?(?<version>\\d+\\.\\d+\\.\\d+)$",
-      "autoReplaceStringTemplate": "ENV CLAUDIO_SKILLS_V v{{newVersion}}"
+      "autoReplaceStringTemplate": "CS_REF  ?= {{newValue}}"
     }
   ],
   "packageRules": []
