@@ -29,7 +29,7 @@ ARTIFACT_NAME ?= claudio
 
 # Claudio skills
 #
-# CS_REF_TYPE can be tag or pr
+# CS_REF_TYPE can be branch, tag, or pr
 # Example when we create a tag version for claudio
 CS_REF_TYPE  ?= tag
 CS_REF  ?= 0.5.3

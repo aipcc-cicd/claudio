@@ -38,8 +38,9 @@ ARG CS_REF
 # cache so we always get fresh content when the remote ref updates.
 ARG CS_CACHE_KEY
 ENV CS_REPO https://github.com/aipcc-cicd/claudio-skills.git
-RUN set -eux; \
-    if [ "${CS_REF_TYPE}" = "pr" ]; then \ 
+RUN echo "cs-cache-key: ${CS_CACHE_KEY}" \
+ && set -eux; \
+    if [ "${CS_REF_TYPE}" = "pr" ]; then \
         git clone "${CS_REPO}"; \
         git -C claudio-skills fetch --depth 1 origin "pull/${CS_REF}/head"; \
         git -C claudio-skills checkout FETCH_HEAD; \
@@ -82,7 +83,11 @@ COPY scripts/ entrypoint.sh /usr/local/bin/
 COPY --from=preparer /claudio-skills /home/claudio/claudio-skills
 ARG CS_REF_TYPE
 ARG CS_REF
-RUN if [ "${CS_REF_TYPE}" != "pr" ]; then \
+ARG CS_CACHE_KEY
+RUN echo "cs-cache-key: ${CS_CACHE_KEY}" \
+ && if [ "${CS_REF_TYPE}" = "branch" ]; then \
+        claude plugin marketplace add aipcc-cicd/claudio-skills#${CS_REF}; \
+    elif [ "${CS_REF_TYPE}" != "pr" ]; then \
         claude plugin marketplace add aipcc-cicd/claudio-skills@v${CS_REF}; \
     else \
          claude plugin marketplace add /home/claudio/claudio-skills; \
