@@ -53,6 +53,7 @@ FROM registry.access.redhat.com/ubi10/python-312-minimal@sha256:1124c0e91dbae9b8
 ARG TARGETARCH
 USER root
 ENV HOME /home/claudio
+ENV PATH="${HOME}/.local/bin:${PATH}"
 
 # Base for claudio image
 RUN microdnf install -y skopeo podman unzip gzip git jq; \
@@ -66,8 +67,7 @@ ENV CLAUDE_CODE_USE_VERTEX=1 \
     ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5@20251001 \
     DISABLE_AUTOUPDATER=1
 ENV CLAUDE_BASE_URL="https://github.com/anthropics/claude-code/releases/download/v${CLAUDE_V}/claude-code-v${CLAUDE_V}"
-RUN curl -fsSL https://claude.ai/install.sh | bash -s ${CLAUDE_V} && \
-    ln -s ~/.local/bin/claude /usr/local/bin/claude
+RUN curl -fsSL https://claude.ai/install.sh | bash -s ${CLAUDE_V}
     
 # GCloud
 COPY --from=preparer /opt/google-cloud-sdk /opt/google-cloud-sdk
