@@ -15,28 +15,23 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-VERSION ?= 0.6.1
+VERSION ?= dev
 CONTAINER_MANAGER ?= podman
 
 # Image configuration
 IMAGE_REPO ?= quay.io/aipcc-cicd/claudio
-IMAGE_TAG ?= v${VERSION}
+IMAGE_TAG ?= ${VERSION}
 IMAGE_NAME ?= $(IMAGE_REPO):$(IMAGE_TAG)
 IMAGE_SOURCE_TAG ?= $(IMAGE_TAG)
 
 # Artifact naming
 ARTIFACT_NAME ?= claudio
 
-# Claudio skills
-#
-# CS_REF_TYPE can be branch, tag, or pr
-# Example when we create a tag version for claudio
-CS_REF_TYPE  ?= tag
-CS_REF  ?= 0.5.3
+# Claudio skills — ref type (branch, tag, or pr) and ref value.
+# Override via env vars for release builds: CS_REF_TYPE=tag CS_REF=v0.5.5
+CS_REF_TYPE  ?= branch
+CS_REF  ?= main
 CS_REPO ?= https://github.com/aipcc-cicd/claudio-skills.git
-# For CS PR 41
-# CS_REF_TYPE = pr
-# CS_REF = 41
 # Resolve the remote HEAD SHA for the skills ref so the build cache
 # invalidates automatically when the PR/branch gets new commits.
 CS_CACHE_KEY_CMD = $(if $(filter pr,$(CS_REF_TYPE)), \
@@ -78,8 +73,3 @@ oci-tag:
 oci-push:
 	${CONTAINER_MANAGER} push $(IMAGE_NAME)
 
-# Integrations
-.PHONY: integrations-update
-
-integrations-update:
-	sed -e 's%<IMAGE>%$(IMAGE_NAME)%g' integrations/gitlab-ci/template/claudio.yml > integrations/gitlab-ci/claudio.yml

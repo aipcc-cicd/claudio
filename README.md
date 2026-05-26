@@ -33,7 +33,6 @@ Available targets:
 - `oci-tag` - Tag existing image with new tag
 - `oci-manifest-build` - Create multi-arch manifest from arch-tagged images
 - `oci-manifest-push` - Push manifest to registry
-- `integrations-update` - Regenerate CI templates with current image version
 
 ## Claudio Skills Reference
 
@@ -68,7 +67,7 @@ When developing changes to claudio-skills that affect a downstream image (e.g. a
    ```bash
    CS_REF_TYPE=pr CS_REF=9 make oci-build
    ```
-   This produces a local image tagged `quay.io/aipcc-cicd/claudio:v1.0.0-dev`.
+   This produces a local image tagged `quay.io/aipcc-cicd/claudio:dev`.
 3. In the downstream repo, point the `FROM` line at that local image (or tag it to match the expected base tag) and build:
    ```bash
    # In aipcc-claudio
@@ -153,7 +152,7 @@ The `.claudio` template uses the claudio image directly as the job container. Yo
 
 Available variables:
 - `CLAUDIO_PROMPT` (required) — the prompt to run
-- `CLAUDIO_IMAGE` — override the claudio image (default: current release version)
+- `CLAUDIO_IMAGE` — override the claudio image (default: `quay.io/aipcc-cicd/claudio:latest`)
 - `CLAUDIO_EXTRA_ARGS` — extra arguments passed to claudio
 - `CLAUDIO_STREAM` — set to `1` to enable human-readable streaming output in the job log
 - `CLAUDIO_LOG_FILE` — write a plain-text log (no ANSI codes) to this path (streaming mode only)
@@ -173,6 +172,22 @@ my-claudio-job:
     CLAUDIO_PROMPT: "Do something useful"
 ```
 
-The template is generated from `integrations/gitlab-ci/template/claudio.yml`. When preparing a release, run `make integrations-update` to regenerate the template with the current version, then commit the result.
-
 Downstream projects can extend this template to add their own secret management.
+
+## Releasing
+
+Releases are fully automated via GitHub Actions — no manual commits or version bumps needed.
+
+1. Go to **Actions** → **Release** → **Run workflow**
+2. Enter the version (e.g. `v0.8.0`) and the claudio-skills tag to pin (e.g. `v0.5.5`)
+3. Click **Run workflow**
+
+The workflow builds multi-arch images, pushes to Quay (`quay.io/aipcc-cicd/claudio:v0.8.0`), creates a git tag, and publishes a GitHub Release with auto-generated notes.
+
+### Patch releases
+
+If you need to patch an older release:
+
+1. Create a release branch from the tag: `git checkout -b release-0.7 v0.7.0`
+2. Cherry-pick the fix(es) and push the branch: `git push origin release-0.7`
+3. Run the release workflow, selecting the release branch as the target
