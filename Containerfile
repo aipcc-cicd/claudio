@@ -85,12 +85,10 @@ ARG CS_REF_TYPE
 ARG CS_REF
 ARG CS_CACHE_KEY
 RUN echo "cs-cache-key: ${CS_CACHE_KEY}" \
- && if [ "${CS_REF_TYPE}" = "branch" ]; then \
-        claude plugin marketplace add aipcc-cicd/claudio-skills#${CS_REF}; \
-    elif [ "${CS_REF_TYPE}" != "pr" ]; then \
-        claude plugin marketplace add aipcc-cicd/claudio-skills@v${CS_REF}; \
+ && if [ "${CS_REF_TYPE}" = "pr" ]; then \
+        claude plugin marketplace add /home/claudio/claudio-skills; \
     else \
-         claude plugin marketplace add /home/claudio/claudio-skills; \
+        claude plugin marketplace add aipcc-cicd/claudio-skills@${CS_REF}; \
     fi; \
     claude plugin install --scope user claudio-plugin; \
     pt-manager.sh

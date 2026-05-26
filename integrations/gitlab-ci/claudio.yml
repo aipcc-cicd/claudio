@@ -14,7 +14,7 @@
 #       CLAUDIO_PROMPT: "Analyze the latest MRs and report to Slack"
 #
 # Optional variables to override:
-#   CLAUDIO_IMAGE       - claudio container image (default: quay.io/aipcc-cicd/claudio:<VERSION>)
+#   CLAUDIO_IMAGE       - claudio container image (default: quay.io/aipcc-cicd/claudio:latest)
 #   CLAUDIO_EXTRA_ARGS  - Extra arguments passed to claudio
 #
 
@@ -23,7 +23,7 @@
     name: ${CLAUDIO_IMAGE}
     entrypoint: [""]
   variables:
-    CLAUDIO_IMAGE: "quay.io/aipcc-cicd/claudio:v0.5.0-dev"
+    CLAUDIO_IMAGE: "quay.io/aipcc-cicd/claudio:latest"
     CLAUDIO_EXTRA_ARGS: ""
   script:
     - |
