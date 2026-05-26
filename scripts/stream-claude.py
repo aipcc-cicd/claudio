@@ -264,12 +264,12 @@ while True:
         block = event.get("content_block", {})
         block_type = block.get("type")
         if block_type == "text":
-            print(f"{CLAUDE_COLOR}\U0001f4ac Claude ", end="", flush=True)
-            _log("\U0001f4ac Claude ")
+            print(f"{CLAUDE_COLOR}\U0001f4ac Claude: ", end="", flush=True)
+            _log("\U0001f4ac Claude: ")
             active_block = "text"
         elif block_type == "thinking":
-            print(f"{THINK_COLOR}\U0001f9e0 Thinking ", end="", flush=True)
-            _log("\U0001f9e0 Thinking ")
+            print(f"{THINK_COLOR}\U0001f9e0 Thinking: ", end="", flush=True)
+            _log("\U0001f9e0 Thinking: ")
             active_block = "thinking"
         elif block_type in ("tool_use", "server_tool_use"):
             tool_name = block.get("name", "unknown")
