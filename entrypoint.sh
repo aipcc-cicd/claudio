@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Default DEBUG to false if not set
 DEBUG="${DEBUG:-false}"
@@ -92,8 +93,8 @@ if ! check_adc; then
   echo "Running gcloud auth application-default login..."
   gcloud auth application-default login --quiet
   # Setup project and quota
-  gcloud config set project ${ANTHROPIC_VERTEX_PROJECT_ID}
-  gcloud auth application-default set-quota-project ${ANTHROPIC_VERTEX_PROJECT_QUOTA}
+  gcloud config set project "${ANTHROPIC_VERTEX_PROJECT_ID:-}"
+  gcloud auth application-default set-quota-project "${ANTHROPIC_VERTEX_PROJECT_QUOTA:-}"
 fi
 
 # Configure git identity (defaults can be overridden via env vars)
@@ -123,6 +124,10 @@ CLAUDE_MD="${HOME}/.claude/CLAUDE.md"
 for c in ~/.claude/context.d/*.md; do
   [ -f "$c" ] && echo "@$c" >>"$CLAUDE_MD"
 done
+
+if [ -n "${CLAUDIO_PROMPT:-}" ] && [ "${CLAUDIO_LOG_PROMPT:-1}" = "1" ]; then
+  printf "=== PROMPT ===\n%s\n" "${CLAUDIO_PROMPT}"
+fi
 
 # --- Non-streaming mode: transparent passthrough ---
 if [ "${CLAUDIO_STREAM:-}" != "1" ]; then
