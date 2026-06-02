@@ -14,14 +14,14 @@
 # limitations under the License.
 #
 # SPDX-License-Identifier: Apache-2.0
-FROM registry.access.redhat.com/ubi10@sha256:9d3b5102e7ae4f82914a1791610b75acef134b93158be6005b6ae9218c163550 as preparer
+FROM registry.access.redhat.com/ubi10@sha256:0dd39702a460602f3c15a9f5abd7620de550a8d23ffcb249c0ad4aa163ec60ae as preparer
 ARG TARGETARCH
 
 RUN dnf install -y git 
 
 
 # GCloud
-ENV GCLOUD_V 566.0.0
+ENV GCLOUD_V 570.0.0
 ENV GCLOUD_BASE_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${GCLOUD_V}"
 ENV GCLOUD_URL="${GCLOUD_BASE_URL}-linux-x86_64.tar.gz"
 RUN set -eux; \
@@ -48,7 +48,7 @@ RUN echo "cs-cache-key: ${CS_CACHE_KEY}" \
     mkdir -p claudio-skills;
 
 # Claudio image    
-FROM registry.access.redhat.com/ubi10/python-312-minimal@sha256:1124c0e91dbae9b8893a218e34e7437b03865da333015078fd6bb84e2daf3665
+FROM registry.access.redhat.com/ubi10/python-312-minimal@sha256:da336bc214ac27e4c5c096f3f5f058b5292529720468f479395c108e4fd836a0
 
 ARG TARGETARCH
 USER root
@@ -61,7 +61,7 @@ RUN microdnf install -y skopeo podman unzip gzip git jq; \
     
 # Claude
 # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
-ENV CLAUDE_V 2.1.126
+ENV CLAUDE_V 2.1.160
 ENV CLAUDE_CODE_USE_VERTEX=1 \
     CLOUD_ML_REGION=global \
     ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5@20251001 \
