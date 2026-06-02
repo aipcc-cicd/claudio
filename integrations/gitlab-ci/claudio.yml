@@ -14,23 +14,17 @@
 #       CLAUDIO_PROMPT: "Analyze the latest MRs and report to Slack"
 #
 # Optional variables to override:
-#   CLAUDIO_IMAGE       - claudio container image (default: quay.io/aipcc-cicd/claudio:latest)
 #   CLAUDIO_EXTRA_ARGS  - Extra arguments passed to claudio
 #
 
 .claudio:
   image:
-    name: ${CLAUDIO_IMAGE}
+    name: quay.io/aipcc-cicd/claudio:v0.7.3
     entrypoint: [""]
   variables:
-    CLAUDIO_IMAGE: "quay.io/aipcc-cicd/claudio:latest"
     CLAUDIO_EXTRA_ARGS: ""
   script:
     - |
-      if [ -z "${CLAUDIO_PROMPT}" ]; then
-        echo "ERROR: CLAUDIO_PROMPT variable is not set" >&2
-        exit 1
-      fi
-
-      printf "=== PROMPT ===\n%s\n" "${CLAUDIO_PROMPT}"
+      #!/usr/bin/env bash
+      set -euo pipefail
       entrypoint.sh -p "${CLAUDIO_PROMPT}" ${CLAUDIO_EXTRA_ARGS}
