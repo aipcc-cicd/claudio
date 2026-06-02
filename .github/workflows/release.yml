@@ -56,9 +56,48 @@ jobs:
           exit 1
         fi
 
+  prepare-release:
+    name: Prepare Release
+    needs: authorize
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    outputs:
+      release_sha: ${{ steps.commit.outputs.release_sha }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: Update release metadata
+      env:
+        RELEASE_VERSION: ${{ inputs.version }}
+        SKILLS_REF: ${{ inputs.skills_ref }}
+      run: |
+        cat > release-metadata.json <<EOF
+        {
+          "version": "${RELEASE_VERSION}",
+          "skills_ref": "${SKILLS_REF}",
+          "released_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+        }
+        EOF
+
+    - name: Commit and push
+      id: commit
+      env:
+        RELEASE_VERSION: ${{ inputs.version }}
+        SKILLS_REF: ${{ inputs.skills_ref }}
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add release-metadata.json
+        git commit -m "chore(release): ${RELEASE_VERSION} (skills: ${SKILLS_REF})"
+        git push origin HEAD
+        echo "release_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
   build-and-upload:
     name: Build Images
-    needs: authorize
+    needs: prepare-release
     runs-on: ${{ matrix.runner }}
     permissions:
       contents: read
@@ -74,6 +113,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v6
       with:
+        ref: ${{ needs.prepare-release.outputs.release_sha }}
         persist-credentials: false
 
     - name: Build image (${{ matrix.arch }})
@@ -97,7 +137,9 @@ jobs:
 
   push-quay:
     name: Push to Quay
-    needs: build-and-upload
+    needs:
+      - prepare-release
+      - build-and-upload
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -106,6 +148,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v6
       with:
+        ref: ${{ needs.prepare-release.outputs.release_sha }}
         persist-credentials: false
 
     - name: Download claudio images
@@ -141,7 +184,9 @@ jobs:
 
   create-release:
     name: Create GitHub Release
-    needs: push-quay
+    needs:
+      - prepare-release
+      - push-quay
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -151,9 +196,10 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         RELEASE_VERSION: ${{ inputs.version }}
+        RELEASE_SHA: ${{ needs.prepare-release.outputs.release_sha }}
       run: |
         gh release create "$RELEASE_VERSION" \
           --repo "${{ github.repository }}" \
-          --target "${{ github.sha }}" \
+          --target "$RELEASE_SHA" \
           --title "$RELEASE_VERSION" \
           --generate-notes
