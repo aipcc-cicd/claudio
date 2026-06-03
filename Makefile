@@ -28,9 +28,9 @@ IMAGE_SOURCE_TAG ?= $(IMAGE_TAG)
 ARTIFACT_NAME ?= claudio
 
 # Claudio skills — ref type (branch, tag, or pr) and ref value.
-# Override via env vars for release builds: CS_REF_TYPE=tag CS_REF=v0.5.5
-CS_REF_TYPE  ?= branch
-CS_REF  ?= main
+# Override for development: CS_REF_TYPE=branch CS_REF=main
+CS_REF_TYPE  ?= tag
+CS_REF  ?= v0.6.2
 CS_REPO ?= https://github.com/aipcc-cicd/claudio-skills.git
 # Resolve the remote HEAD SHA for the skills ref so the build cache
 # invalidates automatically when the PR/branch gets new commits.

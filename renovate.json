@@ -30,6 +30,15 @@
       "datasourceTemplate": "docker",
       "depNameTemplate": "google/cloud-sdk",
       "autoReplaceStringTemplate": "ENV GCLOUD_V {{newVersion}}"
+    },
+    {
+      "customType": "regex",
+      "description": "Update Claudio Skills version",
+      "managerFilePatterns": ["Makefile"],
+      "matchStrings": ["CS_REF\\s+\\?=\\s+(?<currentValue>v\\d+\\.\\d+\\.\\d+)"],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "aipcc-cicd/claudio-skills",
+      "autoReplaceStringTemplate": "CS_REF  ?= {{newValue}}"
     }
   ],
   "packageRules": []
