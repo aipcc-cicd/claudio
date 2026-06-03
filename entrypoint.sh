@@ -11,7 +11,9 @@ fi
 
 ADC_PATH="${GOOGLE_APPLICATION_CREDENTIALS:-${HOME}/.config/gcloud/application_default_credentials.json}"
 CLAUDIO_RESULT_FILE="${CLAUDIO_RESULT_FILE:-}"
-CLAUDIO_EVALUATION_PROMPT="${CLAUDIO_EVALUATION_PROMPT:-$(cat <<'EOF'
+CLAUDIO_VALIDATE_RESULT="${CLAUDIO_VALIDATE_RESULT:-true}"
+# CLAUDIO_EVALUATION_PROMPT and CLAUDIO_EVALUATION_MODEL are deprecated names, kept for backwards compatibility
+CLAUDIO_OUTPUT_PROMPT="${CLAUDIO_OUTPUT_PROMPT:-${CLAUDIO_EVALUATION_PROMPT:-$(cat <<'EOF'
 Read this Claude Code session log and determine whether the task completed successfully.
 
 Your entire response must be a single word or line — no preamble, no explanation:
@@ -27,7 +29,7 @@ Rules for FAILURE:
 - the final state is uncertain
 - the task could not be verified as complete
 EOF
-)}"
+)}}"
 
 ###################
 #### Functions ####
@@ -191,23 +193,27 @@ if [ -n "${CLAUDIO_RESULT_FILE}" ] && [ -s "${CLAUDIO_LOG_FILE:-}" ]; then
 
   eval_output=""
   if ! eval_output=$(tail -c "${CLAUDIO_RESULT_MAX_CHARS:-50000}" "${CLAUDIO_LOG_FILE}" | \
-    claude -p "${CLAUDIO_EVALUATION_PROMPT}" \
-      --model "${CLAUDIO_EVALUATION_MODEL:-claude-haiku-4-5-20251001}" \
+    claude -p "${CLAUDIO_OUTPUT_PROMPT}" \
+      --model "${CLAUDIO_OUTPUT_MODEL:-${CLAUDIO_EVALUATION_MODEL:-claude-haiku-4-5-20251001}}" \
       --no-session-persistence)
   then
     echo "ERROR: Failed to evaluate task result"
     exit 1
   fi
 
-  # Extract the verdict line — models sometimes wrap it in extra text
-  verdict=$(echo "$eval_output" | grep -oE '^(SUCCESS|FAILURE: .+)' | head -n1)
-  if [ -z "$verdict" ]; then
-    verdict=$(echo "$eval_output" | grep -oE '(SUCCESS|FAILURE: .+)' | head -n1)
-  fi
-  echo "${verdict:-$eval_output}" > "${CLAUDIO_RESULT_FILE}"
+  if [[ "$CLAUDIO_VALIDATE_RESULT" == "true" ]]; then
+    # Extract the verdict line — models sometimes wrap it in extra text
+    verdict=$(echo "$eval_output" | grep -oE '^(SUCCESS|FAILURE: .+)' | head -n1)
+    if [ -z "$verdict" ]; then
+      verdict=$(echo "$eval_output" | grep -oE '(SUCCESS|FAILURE: .+)' | head -n1)
+    fi
+    echo "${verdict:-$eval_output}" > "${CLAUDIO_RESULT_FILE}"
 
-  validate_result
-  exit $?
+    validate_result
+    exit $?
+  else
+    echo "$eval_output" > "${CLAUDIO_RESULT_FILE}"
+  fi
 fi
 
 exit 0

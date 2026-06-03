@@ -32,11 +32,11 @@ RUN set -eux; \
     tar -xzf gcloud.tar.gz -C /opt;
 
 # Claudio Skills
-ARG CS_REF_TYPE
-ARG CS_REF
+ARG CS_REF_TYPE=""
+ARG CS_REF=""
 # CS_CACHE_KEY is the resolved commit SHA — changing it invalidates the layer
 # cache so we always get fresh content when the remote ref updates.
-ARG CS_CACHE_KEY
+ARG CS_CACHE_KEY=""
 ENV CS_REPO https://github.com/aipcc-cicd/claudio-skills.git
 RUN echo "cs-cache-key: ${CS_CACHE_KEY}" \
  && set -eux; \
@@ -81,9 +81,9 @@ COPY scripts/ entrypoint.sh /usr/local/bin/
 
 # Claudio Skills
 COPY --from=preparer /claudio-skills /home/claudio/claudio-skills
-ARG CS_REF_TYPE
-ARG CS_REF
-ARG CS_CACHE_KEY
+ARG CS_REF_TYPE=""
+ARG CS_REF=""
+ARG CS_CACHE_KEY=""
 RUN echo "cs-cache-key: ${CS_CACHE_KEY}" \
  && if [ "${CS_REF_TYPE}" = "pr" ]; then \
         claude plugin marketplace add /home/claudio/claudio-skills; \

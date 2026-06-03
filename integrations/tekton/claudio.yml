@@ -95,6 +95,11 @@ spec:
       default: ""
       description: Disable ANSI colors ("1")
 
+    - name: output-result
+      type: string
+      default: "false"
+      description: Write evaluation output to the Tekton result ("true" to enable)
+
     # Credentials
     - name: gcp-credentials
       type: string
@@ -118,6 +123,13 @@ spec:
       default: []
       description: List of Kubernetes Secrets to load as env vars
 
+  results:
+    - name: output
+      description: >
+        Populated when output-result is "true". Uses CLAUDIO_OUTPUT_PROMPT
+        to process the session (default: SUCCESS/FAILURE verdict;
+        override with a custom prompt for different output like summaries).
+
   workspaces:
     - name: source
       optional: true
@@ -129,7 +141,7 @@ spec:
 
   steps:
     - name: run
-      image: quay.io/aipcc-cicd/claudio:v0.7.3
+      image: ttl.sh/claudio-test:8h
 
       args:
         - $(params.extra-args[*])
@@ -162,6 +174,9 @@ spec:
         - name: NO_COLOR
           value: $(params.no-color)
 
+        - name: CLAUDIO_OUTPUT_RESULT
+          value: $(params.output-result)
+
         - name: GOOGLE_APPLICATION_CREDENTIALS
           value: /var/run/secrets/gcp/application_default_credentials.json
 
@@ -171,6 +186,12 @@ spec:
       script: |
         #!/usr/bin/env bash
         set -euo pipefail
+
+        touch "$(results.output.path)"
+
+        if [[ "$CLAUDIO_OUTPUT_RESULT" == "true" ]]; then
+          export CLAUDIO_RESULT_FILE="$(results.output.path)"
+        fi
 
         if [[ "$(workspaces.source.bound)" == "true" ]]; then
           cd "$(workspaces.source.path)"
