@@ -95,6 +95,11 @@ spec:
       default: ""
       description: Disable ANSI colors ("1")
 
+    - name: output-result
+      type: string
+      default: "false"
+      description: Write evaluation output to the Tekton result ("true" to enable)
+
     # Credentials
     - name: gcp-credentials
       type: string
@@ -117,6 +122,13 @@ spec:
       type: array
       default: []
       description: List of Kubernetes Secrets to load as env vars
+
+  results:
+    - name: output
+      description: >
+        Populated when output-result is "true". Uses the evaluation prompt
+        to summarize the session (default: SUCCESS/FAILURE verdict;
+        override CLAUDIO_EVALUATION_PROMPT for custom output like summaries).
 
   workspaces:
     - name: source
@@ -162,6 +174,9 @@ spec:
         - name: NO_COLOR
           value: $(params.no-color)
 
+        - name: CLAUDIO_OUTPUT_RESULT
+          value: $(params.output-result)
+
         - name: GOOGLE_APPLICATION_CREDENTIALS
           value: /var/run/secrets/gcp/application_default_credentials.json
 
@@ -171,6 +186,12 @@ spec:
       script: |
         #!/usr/bin/env bash
         set -euo pipefail
+
+        touch "$(results.output.path)"
+
+        if [[ "$CLAUDIO_OUTPUT_RESULT" == "true" ]]; then
+          export CLAUDIO_RESULT_FILE="$(results.output.path)"
+        fi
 
         if [[ "$(workspaces.source.bound)" == "true" ]]; then
           cd "$(workspaces.source.path)"
@@ -212,6 +233,6 @@ spec:
           done
         fi
 
-        exec entrypoint.sh \
+        entrypoint.sh \
           -p "$CLAUDIO_PROMPT" \
           "$@"

@@ -11,6 +11,7 @@ fi
 
 ADC_PATH="${GOOGLE_APPLICATION_CREDENTIALS:-${HOME}/.config/gcloud/application_default_credentials.json}"
 CLAUDIO_RESULT_FILE="${CLAUDIO_RESULT_FILE:-}"
+CLAUDIO_VALIDATE_RESULT="${CLAUDIO_VALIDATE_RESULT:-true}"
 CLAUDIO_EVALUATION_PROMPT="${CLAUDIO_EVALUATION_PROMPT:-$(cat <<'EOF'
 Read this Claude Code session log and determine whether the task completed successfully.
 
@@ -199,15 +200,19 @@ if [ -n "${CLAUDIO_RESULT_FILE}" ] && [ -s "${CLAUDIO_LOG_FILE:-}" ]; then
     exit 1
   fi
 
-  # Extract the verdict line — models sometimes wrap it in extra text
-  verdict=$(echo "$eval_output" | grep -oE '^(SUCCESS|FAILURE: .+)' | head -n1)
-  if [ -z "$verdict" ]; then
-    verdict=$(echo "$eval_output" | grep -oE '(SUCCESS|FAILURE: .+)' | head -n1)
-  fi
-  echo "${verdict:-$eval_output}" > "${CLAUDIO_RESULT_FILE}"
+  if [[ "$CLAUDIO_VALIDATE_RESULT" == "true" ]]; then
+    # Extract the verdict line — models sometimes wrap it in extra text
+    verdict=$(echo "$eval_output" | grep -oE '^(SUCCESS|FAILURE: .+)' | head -n1)
+    if [ -z "$verdict" ]; then
+      verdict=$(echo "$eval_output" | grep -oE '(SUCCESS|FAILURE: .+)' | head -n1)
+    fi
+    echo "${verdict:-$eval_output}" > "${CLAUDIO_RESULT_FILE}"
 
-  validate_result
-  exit $?
+    validate_result
+    exit $?
+  else
+    echo "$eval_output" > "${CLAUDIO_RESULT_FILE}"
+  fi
 fi
 
 exit 0
