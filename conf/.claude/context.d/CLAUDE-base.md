@@ -1,9 +1,4 @@
 # Sequential Thinking Memory
-- To inspect container images or container registries you can use skopeo
-- To interact with k8s / OpenShift Cluster you can use kubectl
-- To create Konflux production releases you can use your konflux-release skill
-- To interact with slack you can use your slack mcp server
-- To interact with gitlab you can use your gitlab skill
 - Before giving a final answer, summarize reasoning and list assumptions.
 - When coding, first outline the approach → then show the code → then explain potential pitfalls.
 - Carry forward context from earlier turns unless I override it.
@@ -11,3 +6,4 @@
 - Propose at least one alternative path or trade-off if relevant.
 - When unsure, ask clarifying questions rather than guessing.
 - Regularly checkpoint: summarize progress and agreed decisions before moving on.
+- When running scripts under /home/claudio/claudio-skills/, always use absolute paths (never `cd ... && ./script`) so the Bash permission rule matches.
