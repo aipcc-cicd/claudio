@@ -1,0 +1,51 @@
+name: CI
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  shellcheck:
+    name: ShellCheck
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        persist-credentials: false
+
+    - name: Run ShellCheck
+      run: shellcheck entrypoint.sh scripts/pt-manager.sh cli/claudio conf/.claude/hooks/smart-permissions.sh
+
+  yaml-lint:
+    name: YAML lint
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        persist-credentials: false
+
+    - name: Run yamllint
+      run: >-
+        yamllint -c .yamllint.yml
+        .github/workflows/*.yml
+        integrations/gitlab-ci/claudio.yml
+        integrations/tekton/claudio.yml
+        .hadolint.yaml
+
+  hadolint:
+    name: Hadolint
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        persist-credentials: false
+
+    - name: Run hadolint
+      uses: hadolint/hadolint-action@v3.1.0
+      with:
+        dockerfile: Containerfile
