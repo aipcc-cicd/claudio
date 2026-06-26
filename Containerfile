@@ -17,8 +17,8 @@
 FROM registry.access.redhat.com/ubi10@sha256:be840bb76e74900d39d5e4620c184e89382dcfce09cb05c98b4e1246d55612a5 as preparer
 ARG TARGETARCH
 
-RUN dnf install -y git 
-
+RUN dnf install -y git && \
+    dnf clean all
 
 # GCloud
 ENV GCLOUD_V 575.0.0
@@ -47,7 +47,7 @@ RUN echo "cs-cache-key: ${CS_CACHE_KEY}" \
     fi; \
     mkdir -p claudio-skills;
 
-# Claudio image    
+# Claudio image
 FROM registry.access.redhat.com/ubi10/python-312-minimal@sha256:fd68b7fc2cb62fa2b78956772fc5acdd8bbcb4589c88b608f4b80fcf4e0c9262
 
 ARG TARGETARCH
@@ -56,9 +56,10 @@ ENV HOME /home/claudio
 ENV PATH="${HOME}/.local/bin:${PATH}"
 
 # Base for claudio image
-RUN microdnf install -y skopeo podman unzip gzip git jq; \
-    useradd claudio 
-    
+RUN microdnf install -y skopeo podman unzip gzip git jq && \
+    microdnf clean all && \
+    useradd claudio
+
 # Claude
 # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
 ENV CLAUDE_V 2.1.197
@@ -67,13 +68,14 @@ ENV CLAUDE_CODE_USE_VERTEX=1 \
     ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5@20251001 \
     DISABLE_AUTOUPDATER=1
 ENV CLAUDE_BASE_URL="https://github.com/anthropics/claude-code/releases/download/v${CLAUDE_V}/claude-code-v${CLAUDE_V}"
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN curl -fsSL https://claude.ai/install.sh | bash -s ${CLAUDE_V}
-    
+
 # GCloud
 COPY --from=preparer /opt/google-cloud-sdk /opt/google-cloud-sdk
 RUN set -eux; \
     /opt/google-cloud-sdk/install.sh -q; \
-    ln -s /opt/google-cloud-sdk/bin/gcloud /usr/local/bin/gcloud; 
+    ln -s /opt/google-cloud-sdk/bin/gcloud /usr/local/bin/gcloud;
 
 # Conf
 COPY conf/ ${HOME}/

@@ -164,10 +164,12 @@ claude_pid=$!
 python3 -u /usr/local/bin/stream-claude.py "${stream_args[@]}" < "$FIFO" &
 stream_pid=$!
 
+# shellcheck disable=SC2317
 _on_signal() {
   kill "$claude_pid" "$stream_pid" 2>/dev/null || true
 }
 
+# shellcheck disable=SC2317
 cleanup() {
   rm -rf "$FIFO_DIR"
 }
