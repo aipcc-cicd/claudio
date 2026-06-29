@@ -26,4 +26,4 @@ podman run -it --rm --userns=keep-id \
   ${ANTHROPIC_VERTEX_PROJECT_QUOTA:+-e ANTHROPIC_VERTEX_PROJECT_QUOTA="${ANTHROPIC_VERTEX_PROJECT_QUOTA}"} \
   ${SLACK_XOXC_TOKEN:+-e SLACK_XOXC_TOKEN="${SLACK_XOXC_TOKEN}"} \
   ${SLACK_XOXD_TOKEN:+-e SLACK_XOXD_TOKEN="${SLACK_XOXD_TOKEN}"} \
-  quay.io/aipcc-cicd/claudio:v0.6.3 --allowedTools "Write(*)" "Glob(*)" "Read(*)" "$@"
+  quay.io/aipcc-cicd/claudio:latest --allowedTools "Write(*)" "Glob(*)" "Read(*)" "$@"
