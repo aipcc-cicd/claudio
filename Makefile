@@ -30,7 +30,7 @@ ARTIFACT_NAME ?= claudio
 # Claudio skills — ref type (branch, tag, or pr) and ref value.
 # Override for development: CS_REF_TYPE=branch CS_REF=main
 CS_REF_TYPE  ?= tag
-CS_REF  ?= v0.6.4
+CS_REF  ?= v0.6.5
 CS_REPO ?= https://github.com/aipcc-cicd/claudio-skills.git
 # Resolve the remote HEAD SHA for the skills ref so the build cache
 # invalidates automatically when the PR/branch gets new commits.
