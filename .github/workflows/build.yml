@@ -61,6 +61,39 @@ jobs:
         name: claudio-${{ matrix.arch }}
         path: claudio-${{ matrix.arch }}.tar
 
+  smoke-test:
+    name: Smoke test (${{ matrix.arch }})
+    needs: build-and-upload
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v7
+      with:
+        persist-credentials: false
+
+    - name: Download image
+      uses: actions/download-artifact@v8
+      with:
+        name: claudio-${{ matrix.arch }}
+
+    - name: Load image
+      run: |
+        LOADED=$(podman load -i claudio-${{ matrix.arch }}.tar | sed -n 's/^Loaded image: //p')
+        podman tag "${LOADED}" smoke-test:latest
+
+    - name: Run smoke test
+      run: make smoke-test IMAGE_NAME=smoke-test:latest
+
   combine-artifacts:
     name: Combine artifacts
     needs: build-and-upload

@@ -42,7 +42,7 @@ CS_CACHE_KEY ?= $(shell $(CS_CACHE_KEY_CMD))
 CS_BUILD_ARGS = --build-arg CS_REF=$(CS_REF) --build-arg CS_REF_TYPE=$(CS_REF_TYPE) --build-arg CS_CACHE_KEY=$(CS_CACHE_KEY)
 
 # Build actions
-.PHONY: oci-build oci-save oci-load oci-push-arch oci-manifest-build oci-manifest-push oci-tag oci-push
+.PHONY: oci-build oci-save oci-load oci-push-arch oci-manifest-build oci-manifest-push oci-tag oci-push smoke-test
 
 oci-build:
 	${CONTAINER_MANAGER} build $(CS_BUILD_ARGS) -t $(IMAGE_NAME) .
@@ -72,4 +72,9 @@ oci-tag:
 
 oci-push:
 	${CONTAINER_MANAGER} push $(IMAGE_NAME)
+
+smoke-test:
+	@echo "=== Smoke testing $(IMAGE_NAME) ==="
+	${CONTAINER_MANAGER} run --rm -v $(CURDIR)/scripts/smoke-test.sh:/tmp/smoke-test.sh:ro \
+		--entrypoint bash $(IMAGE_NAME) /tmp/smoke-test.sh
 
