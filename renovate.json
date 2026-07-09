@@ -39,6 +39,20 @@
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "aipcc-cicd/claudio-skills",
       "autoReplaceStringTemplate": "CS_REF  ?= {{newValue}}"
+    },
+    {
+      "customType": "regex",
+      "description": "Update mikefarah/yq version",
+      "managerFilePatterns": [
+        "Containerfile"
+      ],
+      "matchStrings": [
+        "ENV\\s+YQ_V\\s+(?<currentValue>\\d+\\.\\d+\\.\\d+)"
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "mikefarah/yq",
+      "extractVersionTemplate": "^v(?<version>.+)$",
+      "autoReplaceStringTemplate": "ENV YQ_V {{newValue}}"
     }
   ],
   "packageRules": []

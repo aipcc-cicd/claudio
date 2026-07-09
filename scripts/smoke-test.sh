@@ -15,7 +15,7 @@ check() {
 check "claude --version" "claude --version"
 check "gcloud --version" "gcloud --version"
 
-for bin in skopeo podman git jq python3; do
+for bin in skopeo podman git jq yq python3; do
 	check "$bin on PATH" "command -v $bin"
 done
 
