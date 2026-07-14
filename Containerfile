@@ -77,11 +77,6 @@ RUN set -eux; \
     /opt/google-cloud-sdk/install.sh -q; \
     ln -s /opt/google-cloud-sdk/bin/gcloud /usr/local/bin/gcloud;
 
-# yq (mikefarah)
-ENV YQ_V 4.53.3
-RUN curl -fsSL "https://github.com/mikefarah/yq/releases/download/v${YQ_V}/yq_linux_${TARGETARCH}" \
-    -o /usr/local/bin/yq && chmod +x /usr/local/bin/yq
-
 # Conf
 COPY conf/ ${HOME}/
 COPY scripts/ entrypoint.sh /usr/local/bin/
