@@ -51,6 +51,7 @@ RUN echo "cs-cache-key: ${CS_CACHE_KEY}" \
 FROM registry.access.redhat.com/ubi10/python-312-minimal@sha256:24fa2174728915326e07755c19a0f313bcdd1f763a01baafa5e71b4d46b1e880
 
 ARG TARGETARCH
+# hadolint ignore=DL3066
 USER root
 ENV HOME /home/claudio
 ENV PATH="${HOME}/.local/bin:${PATH}"
@@ -98,6 +99,7 @@ RUN echo "cs-cache-key: ${CS_CACHE_KEY}" \
 # Claudio
 RUN chown -R claudio:0 ${HOME}; \
     chmod -R ug+rwx ${HOME}
+# hadolint ignore=DL3066
 USER claudio
 WORKDIR /home/claudio
 
