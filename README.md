@@ -2,7 +2,7 @@
 
 OCI image to make claude code portable; the model is being setup to use through Google Vertex AI API.
 
-Additional functionality is provided through the [claudio-skills marketplace](https://github.com/aipcc-cicd/claudio-skills).
+Additional functionality is provided through the [productization-skills marketplace](https://github.com/opendatahub-io/productization-skills).
 
 # Build
 
@@ -34,13 +34,13 @@ Available targets:
 - `oci-manifest-build` - Create multi-arch manifest from arch-tagged images
 - `oci-manifest-push` - Push manifest to registry
 
-## Claudio Skills Reference
+## Productization Skills Reference
 
-During the image build, claudio clones [claudio-skills](https://github.com/aipcc-cicd/claudio-skills) into `/home/claudio/claudio-skills/` and:
+During the image build, claudio clones [productization-skills](https://github.com/opendatahub-io/productization-skills) into `/home/claudio/productization-skills/` and:
 
 1. **Fetches the specified git ref** — a branch, tag, or pull request head
-2. **Runs tool installers** — iterates over `claudio-plugin/tools/*/install.sh` and executes each one (e.g. jq, kubectl)
-3. **Installs Python dependencies** — installs packages from `claudio-plugin/tools/python/*-requirements.txt`
+2. **Runs tool installers** — iterates over `productization-plugin/tools/*/install.sh` and executes each one (e.g. jq, kubectl)
+3. **Installs Python dependencies** — installs packages from `productization-plugin/tools/python/*-requirements.txt`
 4. **Generates plugin configs** — registers skills and tools so Claude can discover them at runtime
 
 The git ref is controlled by two build args:
@@ -58,11 +58,11 @@ CS_REF_TYPE=tag CS_REF=v0.1.0 make oci-build
 CS_REF_TYPE=pr CS_REF=9 make oci-build
 ```
 
-### Testing claudio-skills changes in downstream images
+### Testing productization-skills changes in downstream images
 
-When developing changes to claudio-skills that affect a downstream image (e.g. aipcc-claudio), you can test end-to-end before merging:
+When developing changes to productization-skills that affect a downstream image (e.g. aipcc-claudio), you can test end-to-end before merging:
 
-1. Open a PR in claudio-skills (e.g. PR #9)
+1. Open a PR in productization-skills (e.g. PR #9)
 2. Build the claudio base image referencing that PR:
    ```bash
    CS_REF_TYPE=pr CS_REF=9 make oci-build
@@ -179,7 +179,7 @@ Downstream projects can extend this template to add their own secret management.
 Releases are fully automated via GitHub Actions — no manual commits or version bumps needed.
 
 1. Go to **Actions** → **Release** → **Run workflow**
-2. Enter the version (e.g. `v0.8.0`) and the claudio-skills tag to pin (e.g. `v0.5.5`)
+2. Enter the version (e.g. `v0.8.0`) and the productization-skills tag to pin (e.g. `v0.5.5`)
 3. Click **Run workflow**
 
 The workflow builds multi-arch images, pushes to Quay (`quay.io/aipcc-cicd/claudio:v0.8.0`), creates a git tag, and publishes a GitHub Release with auto-generated notes.

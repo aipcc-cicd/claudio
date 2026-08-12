@@ -37,7 +37,7 @@
       "managerFilePatterns": ["Makefile"],
       "matchStrings": ["CS_REF\\s+\\?=\\s+(?<currentValue>v\\d+\\.\\d+\\.\\d+)"],
       "datasourceTemplate": "github-releases",
-      "depNameTemplate": "aipcc-cicd/claudio-skills",
+      "depNameTemplate": "opendatahub-io/productization-skills",
       "autoReplaceStringTemplate": "CS_REF  ?= {{newValue}}"
     }
   ],

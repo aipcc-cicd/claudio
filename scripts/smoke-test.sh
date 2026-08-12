@@ -20,7 +20,7 @@ for bin in skopeo podman git jq python3; do
 done
 
 check "entrypoint.sh syntax" "bash -n /usr/local/bin/entrypoint.sh"
-check "claudio-plugin installed" "claude plugin list 2>&1 | grep -q claudio-plugin"
+check "productization-plugin installed" "claude plugin list 2>&1 | grep -q productization-plugin"
 
 for script in /usr/local/bin/pt-manager.sh /usr/local/bin/stream-claude.py; do
 	check "$script executable" "test -x $script"

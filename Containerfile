@@ -37,15 +37,15 @@ ARG CS_REF
 # CS_CACHE_KEY is the resolved commit SHA — changing it invalidates the layer
 # cache so we always get fresh content when the remote ref updates.
 ARG CS_CACHE_KEY
-ENV CS_REPO https://github.com/aipcc-cicd/claudio-skills.git
+ENV CS_REPO https://github.com/opendatahub-io/productization-skills.git
 RUN echo "cs-cache-key: ${CS_CACHE_KEY}" \
  && set -eux; \
     if [ "${CS_REF_TYPE}" = "pr" ]; then \
-        git clone "${CS_REPO}"; \
-        git -C claudio-skills fetch --depth 1 origin "pull/${CS_REF}/head"; \
-        git -C claudio-skills checkout FETCH_HEAD; \
+        git clone "${CS_REPO}" productization-skills; \
+        git -C productization-skills fetch --depth 1 origin "pull/${CS_REF}/head"; \
+        git -C productization-skills checkout FETCH_HEAD; \
     fi; \
-    mkdir -p claudio-skills;
+    mkdir -p productization-skills;
 
 # Claudio image
 FROM registry.access.redhat.com/ubi10/python-312-minimal@sha256:3a571c8031770f7e6f032cee78f0d4cba1c117205660fdcaf446f58545a98a6b
@@ -83,17 +83,17 @@ COPY conf/ ${HOME}/
 COPY scripts/ entrypoint.sh /usr/local/bin/
 
 # Claudio Skills
-COPY --from=preparer /claudio-skills /home/claudio/claudio-skills
+COPY --from=preparer /productization-skills /home/claudio/productization-skills
 ARG CS_REF_TYPE
 ARG CS_REF
 ARG CS_CACHE_KEY
 RUN echo "cs-cache-key: ${CS_CACHE_KEY}" \
  && if [ "${CS_REF_TYPE}" = "pr" ]; then \
-        claude plugin marketplace add /home/claudio/claudio-skills; \
+        claude plugin marketplace add /home/claudio/productization-skills; \
     else \
-        claude plugin marketplace add aipcc-cicd/claudio-skills@${CS_REF}; \
+        claude plugin marketplace add opendatahub-io/productization-skills@${CS_REF}; \
     fi; \
-    claude plugin install --scope user claudio-plugin; \
+    claude plugin install --scope user productization-plugin; \
     pt-manager.sh
 
 # Claudio

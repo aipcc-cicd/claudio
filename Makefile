@@ -31,7 +31,7 @@ ARTIFACT_NAME ?= claudio
 # Override for development: CS_REF_TYPE=branch CS_REF=main
 CS_REF_TYPE  ?= tag
 CS_REF  ?= v0.7.0
-CS_REPO ?= https://github.com/aipcc-cicd/claudio-skills.git
+CS_REPO ?= https://github.com/opendatahub-io/productization-skills.git
 # Resolve the remote HEAD SHA for the skills ref so the build cache
 # invalidates automatically when the PR/branch gets new commits.
 CS_CACHE_KEY_CMD = $(if $(filter pr,$(CS_REF_TYPE)), \

@@ -20,7 +20,7 @@ So we put it in a container.
 
 ## What Claudio actually is
 
-[Claudio](https://github.com/aipcc-cicd/claudio) is an open-source OCI image, built on Red Hat UBI 10, that packages Claude Code with everything it needs to work on its own. Authentication (we use Google Vertex AI), a bunch of DevOps CLI tools — kubectl, glab, skopeo, jq, AWS CLI — and a plugin system called [claudio-skills](https://github.com/aipcc-cicd/claudio-skills) that gives the agent actual capabilities in specific domains.
+[Claudio](https://github.com/aipcc-cicd/claudio) is an open-source OCI image, built on Red Hat UBI 10, that packages Claude Code with everything it needs to work on its own. Authentication (we use Google Vertex AI), a bunch of DevOps CLI tools — kubectl, glab, skopeo, jq, AWS CLI — and a plugin system called [productization-skills](https://github.com/opendatahub-io/productization-skills) that gives the agent actual capabilities in specific domains.
 
 You can run it locally with `podman run`, deploy it as a Kubernetes CronJob, drop it into a GitLab CI pipeline. Same image everywhere. That's the whole point.
 
@@ -36,7 +36,7 @@ So when Claudio analyzes a GitLab pipeline failure, it's not inventing CLI comma
 
 This is what makes us comfortable running it unattended. You get the flexibility of an AI agent (it can reason, adapt, handle things you didn't anticipate) without the fragility (because the important stuff is locked down in code that we've tested).
 
-The [claudio-skills repo](https://github.com/aipcc-cicd/claudio-skills) currently has skills for CI/CD analysis, release orchestration, log analysis, Slack, branch management, and Jira. And adding a new one is honestly pretty easy — you create a directory with a markdown file and some scripts. No SDK, no framework. The markdown tells the agent what the skill can do and how to use the scripts. Think of it as a very detailed runbook, except the AI actually follows it (most of the time).
+The [productization-skills repo](https://github.com/opendatahub-io/productization-skills) currently has skills for CI/CD analysis, release orchestration, log analysis, Slack, branch management, and Jira. And adding a new one is honestly pretty easy — you create a directory with a markdown file and some scripts. No SDK, no framework. The markdown tells the agent what the skill can do and how to use the scripts. Think of it as a very detailed runbook, except the AI actually follows it (most of the time).
 
 ## What we actually do with it
 
@@ -79,7 +79,7 @@ That's exactly what we do. The upstream Claudio image is generic. Our team-speci
 The project is open source under Apache 2.0:
 
 - [Claudio](https://github.com/aipcc-cicd/claudio) — base image, build instructions, wrapper script, CI templates
-- [Claudio Skills](https://github.com/aipcc-cicd/claudio-skills) — the skill marketplace with examples and contribution guidelines
+- [Productization Skills](https://github.com/opendatahub-io/productization-skills) — the skill marketplace with examples and contribution guidelines
 
 If you're spending hours each week on DevOps work that needs judgment — not just execution — it might be worth a look. And if you build something with it, we'd love to hear about it.
 
