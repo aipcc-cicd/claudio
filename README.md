@@ -36,7 +36,7 @@ Available targets:
 
 ## Productization Skills Reference
 
-During the image build, claudio clones [productization-skills](https://github.com/opendatahub-io/productization-skills) into `/home/claudio/productization-skills/` and:
+For PR builds (`CS_REF_TYPE=pr`), the image build clones [productization-skills](https://github.com/opendatahub-io/productization-skills) into `/home/claudio/productization-skills/`. For branch and tag builds, it adds the remote marketplace at the selected `CS_REF`. Both paths then:
 
 1. **Fetches the specified git ref** — a branch, tag, or pull request head
 2. **Runs tool installers** — iterates over `productization-plugin/tools/*/install.sh` and executes each one (e.g. jq, kubectl)
