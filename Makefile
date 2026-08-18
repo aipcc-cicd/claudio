@@ -29,9 +29,8 @@ ARTIFACT_NAME ?= claudio
 
 # Claudio skills — ref type (branch, tag, or pr) and ref value.
 # Override for development: CS_REF_TYPE=branch CS_REF=main
-# TODO(#178): switch back to CS_REF_TYPE=tag once productization-skills has its first release tag
-CS_REF_TYPE  ?= branch
-CS_REF  ?= main
+CS_REF_TYPE  ?= tag
+CS_REF  ?= v0.8.1
 CS_REPO ?= https://github.com/opendatahub-io/productization-skills.git
 # Resolve the remote HEAD SHA for the skills ref so the build cache
 # invalidates automatically when the PR/branch gets new commits.
