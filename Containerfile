@@ -48,7 +48,7 @@ RUN echo "cs-cache-key: ${CS_CACHE_KEY}" \
     mkdir -p productization-skills;
 
 # Claudio image
-FROM registry.access.redhat.com/ubi10/python-312-minimal@sha256:4eb5d80de0ef47a7fdff94a76b784d9b23a8118850426a2ac2b39df0a41cbbae
+FROM registry.access.redhat.com/ubi10/python-312-minimal@sha256:155d86599ab00ba0ad34257137f36530a069594e1a9000509365c21aa5339d13
 
 ARG TARGETARCH
 # hadolint ignore=DL3066
