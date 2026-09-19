@@ -98,7 +98,7 @@ jobs:
     name: Combine artifacts
     needs: build-and-upload
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
 
     steps:
     - name: Download claudio images
@@ -120,7 +120,7 @@ jobs:
     name: Push to GHCR (main branch)
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: build-and-upload
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
       packages: write
