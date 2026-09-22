@@ -17,7 +17,7 @@ env:
 jobs:
   authorize:
     name: Authorize
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     environment: release
     steps:
     - name: Verify team membership
@@ -87,7 +87,7 @@ jobs:
   push-quay:
     name: Push to Quay
     needs: build-and-upload
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
 
@@ -131,7 +131,7 @@ jobs:
   create-release:
     name: Create GitHub Release
     needs: push-quay
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: write
 

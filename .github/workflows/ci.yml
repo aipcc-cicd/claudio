@@ -12,7 +12,7 @@ on:
 jobs:
   shellcheck:
     name: ShellCheck
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
     - uses: actions/checkout@v7
       with:
@@ -23,7 +23,7 @@ jobs:
 
   yaml-lint:
     name: YAML lint
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
     - uses: actions/checkout@v7
       with:
@@ -39,13 +39,13 @@ jobs:
 
   hadolint:
     name: Hadolint
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
     - uses: actions/checkout@v7
       with:
         persist-credentials: false
 
     - name: Run hadolint
-      uses: hadolint/hadolint-action@v3.4.0
+      uses: hadolint/hadolint-action@v3.5.0
       with:
         dockerfile: Containerfile
