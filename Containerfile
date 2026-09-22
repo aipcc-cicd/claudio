@@ -50,6 +50,12 @@ RUN echo "cs-cache-key: ${CS_CACHE_KEY}" \
 # Claudio image
 FROM registry.access.redhat.com/ubi10/python-312-minimal@sha256:438056e6f95de4fd39e560bf5be5ef45216427a4f8e0d6e7187ba4ca179ad02d
 
+ARG SOURCE_COMMIT
+ARG SOURCE_URL
+LABEL org.opencontainers.image.revision="$SOURCE_COMMIT" \
+      org.opencontainers.image.source="$SOURCE_URL" \
+      claudio.revision="$SOURCE_COMMIT"
+
 ARG TARGETARCH
 # hadolint ignore=DL3066
 USER root

@@ -13,6 +13,8 @@ permissions: {}
 env:
   QUAY_REGISTRY: quay.io
   QUAY_IMAGE_REPO: quay.io/aipcc-cicd/claudio
+  SOURCE_COMMIT: ${{ github.sha }}
+  SOURCE_URL: ${{ github.server_url }}/${{ github.repository }}
 
 jobs:
   authorize:
