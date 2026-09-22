@@ -30,7 +30,7 @@ ARTIFACT_NAME ?= claudio
 # Claudio skills — ref type (branch, tag, or pr) and ref value.
 # Override for development: CS_REF_TYPE=branch CS_REF=main
 CS_REF_TYPE  ?= tag
-CS_REF  ?= v0.8.2
+CS_REF  ?= v0.9.0
 CS_REPO ?= https://github.com/opendatahub-io/productization-skills.git
 # Resolve the remote HEAD SHA for the skills ref so the build cache
 # invalidates automatically when the PR/branch gets new commits.
@@ -77,4 +77,3 @@ smoke-test:
 	@echo "=== Smoke testing $(IMAGE_NAME) ==="
 	${CONTAINER_MANAGER} run --rm -v $(CURDIR)/scripts/smoke-test.sh:/tmp/smoke-test.sh:ro \
 		--entrypoint bash $(IMAGE_NAME) /tmp/smoke-test.sh
-
