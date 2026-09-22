@@ -17,6 +17,8 @@
 
 VERSION ?= dev
 CONTAINER_MANAGER ?= podman
+SOURCE_COMMIT ?= $(shell git rev-parse HEAD)
+SOURCE_URL ?= https://github.com/aipcc-cicd/claudio
 
 # Image configuration
 IMAGE_REPO ?= quay.io/aipcc-cicd/claudio
@@ -40,12 +42,13 @@ CS_CACHE_KEY_CMD = $(if $(filter pr,$(CS_REF_TYPE)), \
 CS_CACHE_KEY ?= $(shell $(CS_CACHE_KEY_CMD))
 
 CS_BUILD_ARGS = --build-arg CS_REF=$(CS_REF) --build-arg CS_REF_TYPE=$(CS_REF_TYPE) --build-arg CS_CACHE_KEY=$(CS_CACHE_KEY)
+IMAGE_BUILD_ARGS = $(CS_BUILD_ARGS) --build-arg SOURCE_COMMIT=$(SOURCE_COMMIT) --build-arg SOURCE_URL=$(SOURCE_URL)
 
 # Build actions
 .PHONY: oci-build oci-save oci-load oci-push-arch oci-manifest-build oci-manifest-push oci-tag oci-push smoke-test
 
 oci-build:
-	${CONTAINER_MANAGER} build $(CS_BUILD_ARGS) -t $(IMAGE_NAME) .
+	${CONTAINER_MANAGER} build $(IMAGE_BUILD_ARGS) -t $(IMAGE_NAME) .
 
 oci-save:
 	${CONTAINER_MANAGER} save -m -o $(ARTIFACT_NAME).tar $(IMAGE_NAME)

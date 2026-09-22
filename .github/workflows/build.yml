@@ -18,6 +18,8 @@ env:
   # GHCR configuration
   GHCR_REGISTRY: ghcr.io
   GHCR_IMAGE_REPO: ${{ format('{0}/{1}', 'ghcr.io', github.repository) }}
+  SOURCE_COMMIT: ${{ github.sha }}
+  SOURCE_URL: ${{ github.server_url }}/${{ github.repository }}
 
 jobs:
   build-and-upload:
