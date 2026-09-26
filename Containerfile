@@ -48,7 +48,7 @@ RUN echo "cs-cache-key: ${CS_CACHE_KEY}" \
     mkdir -p productization-skills;
 
 # Claudio image
-FROM registry.access.redhat.com/ubi10/python-312-minimal@sha256:438056e6f95de4fd39e560bf5be5ef45216427a4f8e0d6e7187ba4ca179ad02d
+FROM registry.access.redhat.com/ubi10/python-312-minimal@sha256:318c7712f8334c7148719d0025a969b984c92f790b1d444baadb53c0433987c4
 
 ARG SOURCE_COMMIT
 ARG SOURCE_URL
@@ -69,7 +69,7 @@ RUN microdnf install -y skopeo podman unzip gzip git jq && \
 
 # Claude
 # https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
-ENV CLAUDE_V 2.1.280
+ENV CLAUDE_V 2.1.283
 ENV CLAUDE_CODE_USE_VERTEX=1 \
     CLOUD_ML_REGION=global \
     ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5@20251001 \
