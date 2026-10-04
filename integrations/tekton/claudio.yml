@@ -1,66 +1,44 @@
-# Reusable Tekton Task for running Claudio jobs.
-#
-# Prerequisites:
-#
-# 1. Create the GCP credentials Secret (see gcp-credentials param description)
-#
-# 2. Apply this Task to your cluster:
-#
-#      kubectl apply -f integrations/tekton/claudio.yml
-#
-# Usage:
-#
-#   apiVersion: tekton.dev/v1
-#   kind: TaskRun
-#   metadata:
-#     name: my-claudio-run
-#   spec:
-#     taskRef:
-#       name: claudio
-#     params:
-#       - name: prompt
-#         value: "Summarize the latest release notes"
-#
-# For repository-based tasks, bind the source workspace:
-#
-#   workspaces:
-#     - name: source
-#       persistentVolumeClaim:
-#         claimName: my-source-pvc
-#
-# Secret injection:
-#
-# The Task accepts an env-secrets array param. At runtime, each Secret
-# is read via kubectl and its keys are exported as environment variables.
-#
-# If you use env-secrets, the service account must be able to read them.
-# Use --resource-name to limit access to only the secrets the task needs:
-#
-#      kubectl create role claudio-env-secrets \
-#        --verb=get --resource=secrets \
-#        --resource-name=gitlab-credentials \
-#        --resource-name=slack-bot-token
-#      kubectl create rolebinding claudio-env-secrets \
-#        --role=claudio-env-secrets \
-#        --serviceaccount=<NAMESPACE>:<SERVICE_ACCOUNT>
-#
-# Example:
-#
-#   params:
-#     - name: env-secrets
-#       value:
-#         - gitlab-credentials
-#         - slack-bot-token
-#
-
-apiVersion: tekton.dev/v1
-kind: Task
+apiVersion: tekton.dev/v1beta1
+kind: StepAction
 metadata:
   name: claudio
+  annotations:
+    tekton.dev/description: |
+      Runs claudio (Claude Code agent) with a given prompt.
+      Writes output to /home/claudio/output/.
+
+      This is a StepAction — compose it into any Task via a step ref.
+      The consuming Task is responsible for defining volumes and secrets.
+
+      Prerequisites:
+        1. GCP credentials secret with key application_default_credentials.json
+           (GCP service account for Vertex AI):
+           kubectl create secret generic claudio-adc \
+             --from-file=application_default_credentials.json=<path-to-key.json>
+        2. ServiceAccount with permissions matching the tools in extra-args
+           (e.g. read access to pods, pods/log, pipelineruns, taskruns for kubectl).
+
+      Usage:
+        volumes:
+          - name: gcp-credentials
+            secret:
+              secretName: claudio-adc
+          - name: claudio-output
+            emptyDir: {}
+        steps:
+          - name: claudio
+            ref:
+              name: claudio
+            params:
+              - name: prompt
+                value: "Troubleshoot the failed PipelineRun"
+              - name: gcp-volume
+                value: gcp-credentials
+              - name: output-volume
+                value: claudio-output
 
 spec:
   params:
-    # Claudio
     - name: prompt
       type: string
       description: Prompt/task for Claudio (required)
@@ -69,6 +47,19 @@ spec:
       type: array
       default: []
       description: Extra arguments passed to Claudio
+
+    - name: image
+      type: string
+      default: "quay.io/aipcc-cicd/claudio:v0.7.3"
+      description: Claudio container image
+
+    - name: gcp-volume
+      type: string
+      description: Name of the volume with GCP credentials
+
+    - name: output-volume
+      type: string
+      description: Name of the volume for claudio output
 
     - name: stream
       type: string
@@ -95,123 +86,34 @@ spec:
       default: ""
       description: Disable ANSI colors ("1")
 
-    # Credentials
-    - name: gcp-credentials
-      type: string
-      default: "claudio-adc"
-      description: |
-        Secret holding the GCP Vertex AI credentials. Secret should be accessible to this task.
+  env:
+    - name: CLAUDIO_PROMPT
+      value: $(params.prompt)
+    - name: CLAUDIO_STREAM
+      value: $(params.stream)
+    - name: CLAUDIO_LOG_FILE
+      value: $(params.log-file)
+    - name: CLAUDIO_WRAP
+      value: $(params.wrap)
+    - name: CLAUDIO_RESULT_FILE
+      value: $(params.result-file)
+    - name: NO_COLOR
+      value: $(params.no-color)
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /var/run/secrets/gcp/application_default_credentials.json
 
-        ---
-        apiVersion: v1
-        kind: Secret
-        metadata:
-          name: claudio-adc
-        type: Opaque
-        data:
-          application_default_credentials.json: ${adc_json}
-          ANTHROPIC_VERTEX_PROJECT_ID: ${project_id}
-          ANTHROPIC_VERTEX_PROJECT_QUOTA: ${quota_project}
+  image: $(params.image)
 
-    - name: env-secrets
-      type: array
-      default: []
-      description: List of Kubernetes Secrets to load as env vars
+  args:
+    - $(params.extra-args[*])
 
-  workspaces:
-    - name: source
-      optional: true
+  volumeMounts:
+    - name: $(params.gcp-volume)
+      mountPath: /var/run/secrets/gcp
+      readOnly: true
+    - name: $(params.output-volume)
+      mountPath: /home/claudio/output
 
-  volumes:
-    - name: gcp-credentials
-      secret:
-        secretName: $(params.gcp-credentials)
-
-  steps:
-    - name: run
-      image: quay.io/aipcc-cicd/claudio:v0.7.3
-
-      args:
-        - $(params.extra-args[*])
-
-      volumeMounts:
-        - name: gcp-credentials
-          mountPath: /var/run/secrets/gcp
-          readOnly: true
-
-      envFrom:
-        - secretRef:
-            name: $(params.gcp-credentials)
-
-      env:
-        - name: CLAUDIO_PROMPT
-          value: $(params.prompt)
-
-        - name: CLAUDIO_STREAM
-          value: $(params.stream)
-
-        - name: CLAUDIO_LOG_FILE
-          value: $(params.log-file)
-
-        - name: CLAUDIO_WRAP
-          value: $(params.wrap)
-
-        - name: CLAUDIO_RESULT_FILE
-          value: $(params.result-file)
-
-        - name: NO_COLOR
-          value: $(params.no-color)
-
-        - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /var/run/secrets/gcp/application_default_credentials.json
-
-        - name: ENV_SECRETS
-          value: "$(params.env-secrets[*])"
-
-      script: |
-        #!/usr/bin/env bash
-        set -euo pipefail
-
-        if [[ "$(workspaces.source.bound)" == "true" ]]; then
-          cd "$(workspaces.source.path)"
-        fi
-
-        load_secret() {
-          local secret_name="$1"
-          local key value tmpfile
-
-          echo "Loading secret: ${secret_name}"
-
-          tmpfile=$(mktemp)
-          trap "rm -f '$tmpfile'" RETURN
-
-          kubectl get secret "${secret_name}" \
-            -o go-template='{{range $k,$v := .data}}{{printf "%s\x00%s\x00" $k ($v|base64decode)}}{{end}}' \
-            > "$tmpfile" || {
-            echo "ERROR: failed loading ${secret_name}" >&2
-            exit 1
-          }
-
-          while IFS= read -r -d '' key && IFS= read -r -d '' value; do
-            [[ "$key" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]] || continue
-            export "$key=$value"
-          done < "$tmpfile"
-        }
-
-        read -ra secrets <<< "$ENV_SECRETS"
-
-        if [[ ${#secrets[@]} -gt 0 && -n "${secrets[0]}" ]]; then
-          command -v kubectl >/dev/null || {
-            echo "ERROR: kubectl not found but ENV_SECRETS requires it"
-            exit 1
-          }
-
-          for secret in "${secrets[@]}"; do
-            [[ -n "$secret" ]] || continue
-            load_secret "$secret"
-          done
-        fi
-
-        exec entrypoint.sh \
-          -p "$CLAUDIO_PROMPT" \
-          "$@"
+  script: |
+    #!/usr/bin/env bash
+    entrypoint.sh -p "$CLAUDIO_PROMPT" "$@"
