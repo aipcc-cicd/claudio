@@ -73,6 +73,7 @@ ENV CLAUDE_V 2.1.312
 ENV CLAUDE_CODE_USE_VERTEX=1 \
     CLOUD_ML_REGION=global \
     ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5@20251001 \
+    CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1 \
     DISABLE_AUTOUPDATER=1
 ENV CLAUDE_BASE_URL="https://github.com/anthropics/claude-code/releases/download/v${CLAUDE_V}/claude-code-v${CLAUDE_V}"
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
