@@ -90,11 +90,17 @@ validate_result() {
 
 # Auth
 if ! check_adc; then
-  echo "Running gcloud auth application-default login..."
-  gcloud auth application-default login --quiet
-  # Setup project and quota
-  gcloud config set project "${ANTHROPIC_VERTEX_PROJECT_ID:-}"
-  gcloud auth application-default set-quota-project "${ANTHROPIC_VERTEX_PROJECT_QUOTA:-}"
+  if [ -t 0 ]; then
+    echo "Running gcloud auth application-default login..."
+    gcloud auth application-default login --quiet
+    # Setup project and quota
+    gcloud config set project "${ANTHROPIC_VERTEX_PROJECT_ID:-}"
+    gcloud auth application-default set-quota-project "${ANTHROPIC_VERTEX_PROJECT_QUOTA:-}"
+  else
+    echo "ERROR: ADC credentials at ${ADC_PATH} are missing or invalid, and no TTY is attached to run an interactive 'gcloud auth application-default login'." >&2
+    echo "ERROR: In a headless environment (CronJob/CI), this means the mounted service-account credentials have expired, been revoked, or are not mounted. Check the 'glcloud-auth' secret." >&2
+    exit 1
+  fi
 fi
 
 # Configure git identity (defaults can be overridden via env vars)
